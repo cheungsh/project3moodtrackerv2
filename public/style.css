@@ -91,7 +91,7 @@ button{
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 500;
 }
 
 #moodButton{
@@ -314,4 +314,53 @@ img{
   color: #627954;
   font-family: 'Open Sans', sans-serif;
   font-weight: 500;
+}
+
+/*------------------Navbar----------------------*/
+/* Bottom Navbar */
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: #fff;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Base Button */
+.bottomNav .navBtn {
+  width: 60px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.25s ease;
+  font-size: 1.6rem;
+  color: #414141;
+}
+
+.bottomNav .navBtn:active:not(.float).active {
+  color: #627954;
+  transform: scale(1.2);
+}
+
+.bottomNav .float i {
+  color: #fff;
+}
+
+/* Floating + Button */
+.bottomNav .float {
+  background: #627954;
+  color: #fff;
+  width: 60px;
+  height: 60px;
+  border-radius: 25px;
+  margin-top: -45px;
 }

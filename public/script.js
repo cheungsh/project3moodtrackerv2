@@ -434,3 +434,15 @@ async function sendMoodData(data) {
     console.error('Error sending mood data:', err);
   }
 }
+
+/* ---------- Bottom Navbar ----------*/
+const navButtons = document.querySelectorAll('.bottomNav .navBtn:not(.float)');
+
+navButtons.forEach(btn => {
+  btn.addEventListener('click', evt => {
+    const clicked = evt.currentTarget;
+
+    navButtons.forEach(b => b.classList.remove('active'));
+    clicked.classList.add('active');
+  });
+});
