@@ -267,6 +267,7 @@ const periodToggle = document.getElementById('periodToggle');
 if (periodToggle) periodToggle.addEventListener('change', e => triggers.period = e.target.checked);
 
 /* ---------- Gather Data for Backend Send ----------*/
+/*
 moodbutton.addEventListener('click', async () => {
   const selectedMood = moodcomment.innerText;
   const name = localStorage.getItem('name') || 'Anonymous';
@@ -385,6 +386,28 @@ moodbutton.addEventListener('click', async () => {
   });
 });
 
+*/
+
+moodbutton.addEventListener('click', async () => {
+  const selectedMood = moodcomment.innerText;
+  const name = localStorage.getItem('name') || 'Anonymous';
+  const { sleepHours, exercise, hobby, meal, social, weather, period } = triggers;
+
+  // For user feedback: show a loading state while awaiting Gemini suggestion
+  document.getElementById('suggestionText').innerText = "Generating...";
+
+  // Save mood entry locally
+  submitMood();
+
+  // Send all data to backend and use AI suggestion from the response
+  await sendMoodData({
+    name,
+    moodValue: selectedMood,
+    ...triggers,
+    streak: recordedDayCounter
+  });
+});
+
 
 /* ---------- Send Data to Backend ----------*/
 async function sendMoodData(data) {
@@ -394,9 +417,20 @@ async function sendMoodData(data) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (response.ok) console.log('Mood data saved to MongoDB.');
-    else console.error('Failed to save mood data.');
+    if (response.ok) {
+      const respData = await response.json();
+      if (respData.suggestions) {
+        document.getElementById('suggestionText').innerText = respData.suggestions;
+      } else {
+        document.getElementById('suggestionText').innerText = "No suggestion available.";
+      }
+      console.log('Mood data saved to MongoDB.');
+    } else {
+      document.getElementById('suggestionText').innerText = "Failed to get suggestion from server.";
+      console.error('Failed to save mood data.');
+    }
   } catch (err) {
+    document.getElementById('suggestionText').innerText = "Error connecting to server.";
     console.error('Error sending mood data:', err);
   }
 }
