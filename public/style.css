@@ -1,0 +1,317 @@
+body {
+  background-color: #f5f5f5;
+  color: #414141;
+  /*Nav overlap*/
+  padding-bottom: 80px;
+}
+
+main{
+  max-width: 400px;
+  padding: 18px;
+  margin: auto;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 700;
+}
+
+h3{
+  font-size: 1rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 600;
+}
+
+h4{
+  font-size: 1rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 500;
+}
+
+input{
+  font-size: 0.9rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+
+button{
+  font-size: 0.9rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+/*-------------------Greeting---------------------*/
+#greetingContainer h2{
+  color: #414141;
+}
+
+/*-------------------User Name Form---------------------*/
+.collectInfoForm{
+  text-align: center;
+  padding: 10px;
+  background-color: #d3ddce;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+
+.collectInfoForm input{
+  width: 80%;
+  padding: 12px 18px;
+  border-radius: 15px;
+  border: none;
+}
+
+.collectInfoForm p{
+  color: #627954;
+}
+
+#submitbutton {
+  margin-top:10px;
+  height: 45px;
+  width: 100px;
+  color: #d3ddce;
+  background-color: #627954;
+  border-radius: 20px;
+  border: none;
+}
+
+/*-------------------Submit Button Nav---------------------*/
+#moodButtonNav{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width:100%;
+  padding: 18px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#moodButton{
+  color: #414141;
+  font-size: 1rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 600;
+  border-radius: 15px;
+  border: none;
+  height: 45px;
+  width: 100%;
+  background-color: rgb(202, 192, 211);
+}
+
+#moodComment{
+  font-size: 16px;
+}
+
+/*------------------Emoji Gallery Slide----------------------*/
+#emojiGallerySlide{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+#emojiGallerySlide img{
+  width: 50px;
+  height: 50px;
+  transition: transform 0.2s;
+}
+
+#emojiGallerySlide img.selected{
+  transform: scale(1.5);
+}
+
+/*------------------Mood Slider----------------------*/
+#m1{
+  padding: 18px;
+  margin-bottom: 18px;
+  background-color: rgba(202, 192, 211, 0.4);
+  border-radius: 20px;
+  text-align: center;
+}
+
+#Mood h2{
+  color: #000;
+}
+
+img{
+  width: 30%;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+#moodSliderContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#moodSliderContainer h3{
+  color: #414141;
+}
+
+#rangeSlider{
+  width: 80%;
+  height: 30px;
+  border-radius: 20px;
+  margin: 10px 0 15px;
+  appearance: none;
+  background-color: rgba(202, 192, 211);
+  outline: none;
+}
+
+#rangeSlider::-webkit-slider-thumb{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  appearance: none;
+  background-color: #fff;
+}
+  
+/*------------------Triggers----------------------*/
+.accordion{
+  margin-bottom: 18px;
+}
+
+.accordionHeader{
+  font-size: 1rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 600;
+  text-align: left;
+  width: 100%;
+  padding: 18px;
+  margin: 0;
+  background-color: #d3ddce;
+  color: #627954;
+  border-radius: 20px 20px 0 0;
+  border: none;
+  transition: background 0.3s;
+}
+
+.accordionHeader.active {
+  border-radius: 20px;
+}
+
+.accordionContent {
+  display: none;
+  width: 100%;
+  padding: 18px;
+  margin: 0;
+  background-color: #fff;
+  color: #414141;
+  border-radius: 0 0 20px 20px;
+}
+
+.accordionContent.active {
+  display: block;
+}
+
+.triggerButton {
+  margin: 5px;
+  padding: 12px 18px;
+  border-radius: 15px;
+  border: none;
+  background-color: #f5f5f5;
+  color: #414141;
+}
+
+.triggerButton.active {
+  background-color: #627954;
+  color: #fff;
+}
+
+.sleepInput{
+  display:block;
+  font-size: 1rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+.sleepInput input{
+  margin: 5px;
+  text-align: center;
+  background-color: #f5f5f5;
+  border:none;
+  border-radius: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch .slider {
+  position: absolute;
+  background-color: #414141;
+  transition: 0.4s;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+}
+
+.switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #fff;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: #ff5252;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/*------------------Suggestion----------------------*/
+#suggestionOutput{
+  color: #414141;
+}
+
+#suggestionText{
+  font-size: 0.9rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+/*------------------Mood Records----------------------*/
+#m2, #m3 {
+  padding: 18px;
+  background-color: #fff;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 18px;
+  color: #414141;
+}
+
+#recordedDayCounter {
+  font-size: 2rem;
+  color: #627954;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 500;
+}

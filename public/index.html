@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <!--Font Awesome-->
+  <!--Not going to use it for this project, but maybe for project 3-->
+  <script src="https://kit.fontawesome.com/05d91707e7.js" crossorigin="anonymous"></script>
+  <!--Cloudflare Donut Chart API-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+  <!--Google Font-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <title>Mood Tracker</title>
+</head>
+
+<body>
+  <!--Mood Button Bottom Nav-->
+  <nav id="moodButtonNav">
+    <button id="moodButton" class="moodButton" type="button">
+      <div id="moodCommentContainer">
+        <div id="moodComment">Calm</div>
+      </div>
+    </button>
+  </nav>
+
+  <!--Main-->
+  <main>
+    <!--Greeting-->
+    <section id="greetingContainer">
+      <h2>
+        <span id="timeofday"></span>
+        <span id="nameResult"></span>
+      </h2>
+    </section>
+
+    <!--User Name Input-->
+    <section id="infoContainer" class="collectInfoForm">
+      <form>
+        <h4>Enter Your Name:</h4>
+        <input id="name" type="text" name="name" placeholder="Enter name...">
+      </form>
+      <button id="submitbutton" type="button" onclick="checkForm()">Submit</button>
+    </section>
+
+    <!--Mood Slider-->
+    <section id="m1" class="moodContent">
+      <div id="moodSliderContainer">
+        <h3>How do you feel today?</h3>
+        <div id="emojiGallerySlide"></div>
+        <input id="rangeSlider" type="range" value="0" min="0" max="8">
+      </div>
+    </section>
+
+    <!--Triggers-->
+    <section id="moodForm">
+      <div id="triggers">
+        <!--Sleep-->
+        <!--Start of Code https://www.w3schools.com/howto/howto_js_accordion.asp-->
+        <div class="accordion active">
+          <button class="accordionHeader">Sleep</button>
+          <div class="accordionContent active">
+            <label class="sleepInput">Sleep Start: <input type="time" id="sleepStart"></label>
+            <label class="sleepInput">Sleep End: <input type="time" id="sleepEnd"></label>
+            <label class="sleepInput">Sleep Date: <input type="date" id="sleepDateStart"></label>
+          </div>
+        </div>
+        <!--End of Code https://www.w3schools.com/howto/howto_js_accordion.asp-->
+
+        <!--Exercise-->
+        <div class="accordion active">
+          <button class="accordionHeader">Exercise</button>
+          <div class="accordionContent active">
+            <button class="triggerButton" data-type="exercise" data-value="cycling">Cycling</button>
+            <button class="triggerButton" data-type="exercise" data-value="baseball">Baseball</button>
+            <button class="triggerButton" data-type="exercise" data-value="running">Running</button>
+            <button class="triggerButton" data-type="exercise" data-value="swimming">Swimming</button>
+            <button class="triggerButton" data-type="exercise" data-value="snowboarding">Snowboarding</button>
+            <button class="triggerButton" data-type="exercise" data-value="skating">Skating</button>
+            <button class="triggerButton" data-type="exercise" data-value="hiking">Hiking</button>
+            <button class="triggerButton" data-type="exercise" data-value="football">Football</button>
+            <button class="triggerButton" data-type="exercise" data-value="basketball">Basketball</button>
+          </div>
+        </div>
+
+        <!--Hobby-->
+        <div class="accordion active">
+          <button class="accordionHeader">Hobby</button>
+          <div class="accordionContent active">
+            <button class="triggerButton" data-type="hobby" data-value="reading">Reading</button>
+            <button class="triggerButton" data-type="hobby" data-value="music">Music</button>
+            <button class="triggerButton" data-type="hobby" data-value="gaming">Gaming</button>
+            <button class="triggerButton" data-type="hobby" data-value="tv shows">TV Shows</button>
+            <button class="triggerButton" data-type="hobby" data-value="cooking">Cooking</button>
+            <button class="triggerButton" data-type="hobby" data-value="chess">Chess</button>
+            <button class="triggerButton" data-type="hobby" data-value="art">Art</button>
+          </div>
+        </div>
+
+        <!--Meal-->
+        <div class="accordion active">
+          <button class="accordionHeader">Meal</button>
+          <div class="accordionContent active">
+            <button class="triggerButton" data-type="meal" data-value="breakfast">Breakfast</button>
+            <button class="triggerButton" data-type="meal" data-value="lunch">Lunch</button>
+            <button class="triggerButton" data-type="meal" data-value="dinner">Dinner</button>
+            <button class="triggerButton" data-type="meal" data-value="midnightsnack">Midnight Snack</button>
+          </div>
+        </div>
+
+        <!--Social-->
+        <div class="accordion active">
+          <button class="accordionHeader">Social</button>
+          <div class="accordionContent active">
+            <button class="triggerButton" data-type="social" data-value="alone">Alone</button>
+            <button class="triggerButton" data-type="social" data-value="friends">Friends</button>
+            <button class="triggerButton" data-type="social" data-value="family">Family</button>
+            <button class="triggerButton" data-type="social" data-value="partner">Partner</button>
+          </div>
+        </div>
+
+        <!--Weather-->
+        <div class="accordion active">
+          <button class="accordionHeader">Weather</button>
+          <div class="accordionContent active">
+            <button class="triggerButton" data-type="weather" data-value="sunny">Sunny</button>
+            <button class="triggerButton" data-type="weather" data-value="rainy">Rainy</button>
+            <button class="triggerButton" data-type="weather" data-value="cloudy">Cloudy</button>
+            <button class="triggerButton" data-type="weather" data-value="windy">Windy</button>
+            <button class="triggerButton" data-type="weather" data-value="stormy">Stormy</button>
+            <button class="triggerButton" data-type="weather" data-value="snowy">Snowy</button>
+          </div>
+        </div>
+
+        <!--Period-->
+        <div class="accordion active">
+          <button class="accordionHeader">Period</button>
+          <div class="accordionContent active">
+            <label class="switch">
+              <input type="checkbox" id="periodToggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!--Suggestions-->
+      <div id="suggestionOutput">
+        <h3>Suggestion:</h3>
+        <p id="suggestionText">Generating...</p>
+      </div>
+    </section>
+
+    <!--Mood Records-->
+    <section>
+      <div id="m3" class="moodContent">
+        <h3>Monthly Mood Chart</h3>
+        <div id="chartContainer">
+          <canvas id="moodChart" width="200" height="200"></canvas>
+        </div>
+      </div>
+
+      <div id="m2" class="moodContent">
+        <h3>Days Logged</h3>
+        <div id="recordedDayCounter"></div>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+
+</html>
