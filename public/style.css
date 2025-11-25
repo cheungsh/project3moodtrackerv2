@@ -50,6 +50,37 @@ button{
   color: #414141;
 }
 
+#greetingContainer{
+    text-align: center;
+}
+#greetingDarkModeButton{
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: 1fr;
+}
+#greetingDarkModeButton h3{
+    grid-column: 1;
+    grid-row: 1;
+}
+#darkModeButton{
+    grid-column: 2;
+    grid-row: 1;
+}
+
+/*-------------------Dark Mode Button---------------------*/
+#darkModeButton {
+    right: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    background-color: #000;
+}
+#darkModeButton i{
+    font-size: 2em;
+    color: #fff;
+}
+
 /*-------------------User Name Form---------------------*/
 .collectInfoForm{
   text-align: center;
@@ -420,3 +451,134 @@ img{
 .backBtn:hover{
   color: #627954;
 }
+
+
+/*----------------------------------------Dark Mode----------------------------------------*/
+
+/*-------------------Greeting---------------------*/
+.dark-mode {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.dark-mode #greetingContainer h2{
+  color: #ffffff;
+}
+
+/*-------------------Dark Mode Button---------------------*/
+.dark-mode #darkModeButton {
+    background-color: #fff;
+}
+.dark-mode #darkModeButton i{
+    color: #000;
+}
+
+/*-------------------User Name Form---------------------*/
+.dark-mode .collectInfoForm{
+  background-color: #627954;
+}
+
+.dark-mode .collectInfoForm p{
+  color: #d3ddce;
+}
+
+.dark-mode #submitbutton {
+  color: #627954;
+  background-color: #d3ddce;
+}
+
+/*-------------------Submit Button Nav---------------------*/
+.dark-mode #moodButtonNav{
+  background-color: #414141;
+}
+
+/*------------------Mood Slider----------------------*/
+
+.dark-mode #moodSliderContainer h3{
+  color: #fff;
+}
+  
+/*------------------Triggers----------------------*/
+.dark-mode .accordionHeader{
+  background-color: #627954;
+  color: #fff;
+}
+
+.dark-mode .accordionContent {
+  background-color: #414141;
+  color: #fff;
+}
+
+.dark-mode .triggerButton {
+  background-color: #f5f5f5;
+  color: #414141;
+}
+
+.dark-mode .triggerButton.active {
+  background-color: #d3ddce;
+  color: #627954;
+}
+
+.dark-mode .sleepInput input{
+  background-color: #fff;
+}
+
+.dark-mode .switch .slider {
+  background-color: #000;
+}
+
+/*------------------Mood Records + Suggestion----------------------*/
+.dark-mode #m2, .dark-mode #m3 {
+  background-color: #414141;
+  color: #fff;
+}
+
+.dark-mode #recordedDayCounter {
+  color: #d3ddce;
+}
+
+.dark-mode #suggestionOutput {
+  background-color: #fff;
+  color: #627954;
+}
+
+/*------------------Navbar----------------------*/
+/* Bottom Navbar */
+.dark-mode .bottomNav {
+  background: #627954;
+}
+
+/* Base Button */
+.dark-mode .bottomNav .navBtn {
+  color: #000000;
+}
+
+.dark-mode  .bottomNav .navBtn.active {
+  color: #ffffff;
+}
+
+.dark-mode  .bottomNav .float.active,
+.dark-mode .bottomNav .navBtn.float.active {
+  background: #ffffff;
+  color: #627954;
+}
+
+.dark-mode .bottomNav .float i {
+  color: #627954;
+}
+
+/* Floating + Button */
+.dark-mode .bottomNav .float {
+  background: #ffffff;
+  color: #627954;
+}
+
+/*------------------Back Button----------------------*/
+.dark-mode .backBtn {
+  color: #ffffff;
+}
+
+.dark-mode .backBtn:hover{
+  color: #627954;
+}
+

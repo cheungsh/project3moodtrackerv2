@@ -31,13 +31,23 @@
   <main>
     <!----- Statistics Section (Default Active) ----->
     <section id="statisticsSection" class="tabSection active" style="display: block;">
-      <!--Greeting-->
-      <section id="greetingContainer">
-        <h2>
-          <span id="timeofday"></span>
-          <span id="nameResult"></span>
-        </h2>
-      </section>
+      <!--Greeting + Dark Mode -->
+      <div id="greetingContainer">
+        <!--Greeting-->
+        <div id="greetings">
+          <h2>
+            <div id="timeofday"></div>
+            <div id="nameResult"></div>
+          </h2>
+        </div>
+        <div id="greetingDarkModeButton">
+          <h3>How was your day?</h3>
+          <!--Dark Mode Button-->
+          <button id="darkModeButton" onclick="toggle()">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+        </div>
+      </div>
 
       <div id="suggestionOutput" class="moodContent">
         <h3><i class="fas fa-lightbulb"></i>Suggestion:</h3>

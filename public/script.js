@@ -61,15 +61,15 @@ const emojis = [
 ];
 
 const backgroundColors = [
-  "rgba(202, 192, 211, 0.4)",
-  "rgba(210, 204, 202, 0.4)",
-  "rgba(199, 163, 167, 0.4)",
-  "rgba(198, 216, 239, 0.4)",
-  "rgba(171, 119, 129, 0.4)",
-  "rgba(175, 169, 205, 0.4)",
-  "rgba(97, 90, 121, 0.4)",
-  "rgba(171, 118, 150, 0.4)",
-  "rgba(151, 98, 111, 0.4)"
+  "rgba(202, 192, 211, 0.6)",
+  "rgba(210, 204, 202, 0.6)",
+  "rgba(199, 163, 167, 0.6)",
+  "rgba(198, 216, 239, 0.6)",
+  "rgba(171, 119, 129, 0.6)",
+  "rgba(175, 169, 205, 0.6)",
+  "rgba(97, 90, 121, 0.6)",
+  "rgba(171, 118, 150, 0.6)",
+  "rgba(151, 98, 111, 0.6)"
 ];
 
 const buttonColors = [
@@ -133,6 +133,8 @@ const chartData = moodLabels.map(
 );
 
 /* Start of Code https://www.w3schools.com/ai/ai_chartjs.asp */
+let chartTextColor = '#414141';
+
 const myChart = new Chart(ctx, {
   type: 'doughnut',
   data: {
@@ -150,7 +152,7 @@ const myChart = new Chart(ctx, {
       labels: {
         fontSize: 16,
         FontFacet: 'Open Sans',
-        fontColor: '#414141',
+        fontColor: chartTextColor,
         padding: 10,
         boxWidth: 15
       }
@@ -280,6 +282,33 @@ moodbutton.addEventListener('click', async () => {
   });
   // Return to statistics tab after submit
   showSection('statistics');
+
+  // Disable all trigger buttons after submitting
+  const triggerButtons = document.querySelectorAll('.triggerButton');
+  triggerButtons.forEach(btn => btn.disabled = true);
+  moodbutton.disabled = true;
+
+  // Clear all previous selections for next submission
+  triggerButtons.forEach(btn => btn.classList.remove('active'));
+  Object.keys(triggers).forEach(key => {
+    if (Array.isArray(triggers[key])) triggers[key] = [];
+    if (typeof triggers[key] === 'boolean') triggers[key] = false;
+    if (key === 'period' && periodToggle) periodToggle.checked = false;
+    if (key === 'sleepHours' || key === 'sleepStart' || key === 'sleepEnd') triggers[key] = null;
+  });
+
+  // Reset sleep inputs
+  sleepStartEl.value = '';
+  sleepEndEl.value = '';
+  sleepDateEl.value = '';
+
+  // Reset mood selection to default
+  const allEmojis = emojiGallerySlide.querySelectorAll('img');
+  allEmojis.forEach((img, i) => img.classList.toggle('selected', i === 0));
+  m1background.style.backgroundColor = backgroundColors[0];
+  moodcomment.innerHTML = moodLabels[0];
+  moodbutton.style.backgroundColor = buttonColors[0];
+
 });
 
 /* ---------- Log Section Back Button ----------*/
@@ -357,3 +386,42 @@ window.addEventListener('DOMContentLoaded', () => {
   showSection('statistics');
 });
 
+/*-------------------Dark Mode---------------------*/
+let bdy = document.body;
+let mode = "light";
+
+//check if browser has storage
+if (typeof (Storage) !== "undefined") {
+    //do we have a value already?
+    if (localStorage.hasOwnProperty("mode")) {
+        //retrieve
+        if (localStorage.getItem("mode") == "dark") {
+            mode = localStorage.getItem("mode");
+            bdy.classList.toggle("dark-mode");
+        }
+    } else {
+        console.log("nothing stored");
+    }
+}
+
+if (mode === "dark") {
+    bdy.classList.add("dark-mode");
+    updateChartForDarkMode(true);
+} else {
+    updateChartForDarkMode(false);
+}
+
+function updateChartForDarkMode(isDark) {
+    chartTextColor = isDark ? '#ffffff' : '#414141';
+    if (myChart && myChart.options && myChart.options.legend && myChart.options.legend.labels) {
+        myChart.options.legend.labels.fontColor = chartTextColor;
+        myChart.update();
+    }
+}
+
+function toggle() {
+    bdy.classList.toggle("dark-mode");
+    mode = bdy.classList.contains("dark-mode") ? "dark" : "light";
+    localStorage.setItem("mode", mode);
+    updateChartForDarkMode(mode === "dark");
+}
