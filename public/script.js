@@ -267,127 +267,6 @@ const periodToggle = document.getElementById('periodToggle');
 if (periodToggle) periodToggle.addEventListener('change', e => triggers.period = e.target.checked);
 
 /* ---------- Gather Data for Backend Send ----------*/
-/*
-moodbutton.addEventListener('click', async () => {
-  const selectedMood = moodcomment.innerText;
-  const name = localStorage.getItem('name') || 'Anonymous';
-  
-  const { sleepHours, exercise, hobby, meal, social, weather, period } = triggers;
-  let suggestion = "You’re doing great! Keep looking after yourself.";
-
-  //Mood based suggestions
-  switch (selectedMood) {
-    case 'calm':
-      suggestion = "You seem the be at ease right now, enjoy it.";
-      break;
-    case 'chill':
-      suggestion = "Nice to know you're taking things easy, keep this relaxed energy going!";
-      break;
-    case 'happy':
-      suggestion = "It's great to see you happy! Spread that joy around!";
-      break;
-    case 'excited':
-      suggestion = "You’re buuuzzzzzing with energy. Go make the most of it!";
-      break;
-    case 'bored':
-      suggestion = "Maybe try something new today? A fresh hobby or a walk outside could shake things up.";
-      break;
-    case 'worried':
-      suggestion = "Thing always seem worse in our heads. Try some deep breathing or a short walk to clear your mind.";
-      break;
-    case 'sad':
-      suggestion = "I know it's been a rough day... Be gentle with yourself. Maybe call a friend, take a little me-time or take a warm shower.";
-      break;
-    case 'frustrated':
-      suggestion = "Ugh, frustrating day huh? Step away for a bit maybe working out or some music might help reset your mood.";
-      break;
-    case 'angry':
-      suggestion = "Hmmm, have you tried boxing? Letting out that energy physically might be able to help cool down your anger.";
-      break;
-  }
-
-  //Trigger based suggestions
-  if (sleepHours && sleepHours < 6) {
-    suggestion = "Looks like you didn’t get much sleep... But your body and mind need it, aim for at least 7–8 hours.";
-  }
-
-  if (exercise && exercise.length > 0) {
-    suggestion = `Nice job with ${exercise.join(", ")}! Staying active really supports your mood.`;
-  }
-
-  if (hobby && hobby.length > 0) {
-    suggestion = `Keep spending time on ${hobby.join(", ")}? Seems like something that will make you feel better.`;
-  }
-
-  if (meal && meal.length < 2) {
-    suggestion = "Looks like you haven't eaten much today. Grab something to boost your energy!";
-  }
-
-  if (meal && meal.includes("midnight snack")) {
-    suggestion = "Late-night snacking can affect your rest... Try to wrap up meals earlier when possible.";
-  }
-
-  if (social === "alone") {
-    suggestion = "We all need some alone time sometimes. Just don’t forget that there're others out there waiting for you to come back.";
-  } else if (["friends", "family", "partner"].includes(social)) {
-    suggestion = `Nice to see you spending time with your ${social}! Social connection could really strengthen ones' emotional balance.`;
-  } else if (social === "alone" && selectedMood === "sad") {
-    suggestion = "Being alone is fine, but reaching out to someone can really help.";
-  } else if (["friends", "family", "partner"].includes(social) && selectedMood === "frustrated") {
-    suggestion = "Seems like you could use some alone time. Others seems to have drained out every last bit of your energy.";
-  }
-
-  if (weather && weather.includes("rainy") && ["sad", "worried"].includes(selectedMood)) {
-    suggestion = "Rainy days can feel heavier... but maybe a warm drink and some cozy music could lift your mood.";
-  }
-
-  if (weather && weather.includes("rainy") && selectedMood === "happy") {
-    suggestion = "The sound of rain makes such a nice white noise, doesn’t it?";
-  }
-
-  if (weather && weather.includes("sunny") && ["happy", "excited"].includes(selectedMood)) {
-    suggestion = "Perfect weather to make the most of your good mood! Get outside and enjoy it!";
-  }
-
-  if (weather && weather.includes("snowy")) {
-    suggestion = "Brrr… it's so cold outside! A nice cup of hot chocolate might help warm you up.";
-  }
-
-  if (period === true && ["sad", "frustrated", "angry"].includes(selectedMood)) {
-    suggestion = "Take it easy today, rest, hydrate, and be kind to yourself. Hang in there girl!";
-  }
-
-  //Combination conditions
-  if (selectedMood === "bored" && (!hobby || hobby.length === 0)) {
-    suggestion = "Feeling bored? Maybe pick something from the hobbies section and try it out, it might end up better than you think.";
-  }
-
-  if (selectedMood === "angry" && (!exercise || exercise.length === 0)) {
-    suggestion = "Channel that anger into action. Go for a walk, run, or just move around can really help.";
-  }
-
-  if (selectedMood === "sad" && social === "alone") {
-    suggestion = "You don’t have to go through it alone if you don't want to, try reaching out to someone can really help.";
-  }
-
-  if (selectedMood === "excited" && weather && weather.includes("sunny")) {
-    suggestion = "Sunshine + excitement = perfect combo. Go make a memory today!";
-  }
-
-  // Display the suggestion text
-  document.getElementById('suggestionText').innerText = suggestion;
-
-  // Save mood entry
-  submitMood();
-
-  // Send all data to backend
-  await sendMoodData({
-    name,moodValue: selectedMood,...triggers, suggestions: suggestion, streak: recordedDayCounter
-  });
-});
-
-*/
-
 moodbutton.addEventListener('click', async () => {
   const selectedMood = moodcomment.innerText;
   const name = localStorage.getItem('name') || 'Anonymous';
@@ -406,8 +285,14 @@ moodbutton.addEventListener('click', async () => {
     ...triggers,
     streak: recordedDayCounter
   });
+  // Return to statistics tab after submit
+  showSection('statistics');
 });
 
+/* ---------- Log Section Back Button ----------*/
+document.getElementById('backToStatsBtn').addEventListener('click', function() {
+  showSection('statistics');
+});
 
 /* ---------- Send Data to Backend ----------*/
 async function sendMoodData(data) {
@@ -436,13 +321,45 @@ async function sendMoodData(data) {
 }
 
 /* ---------- Bottom Navbar ----------*/
-const navButtons = document.querySelectorAll('.bottomNav .navBtn:not(.float)');
+const tabSections = {
+  statistics: document.getElementById('statisticsSection'),
+  log: document.getElementById('logSection'),
+  profile: document.getElementById('profileSection'),
+};
 
-navButtons.forEach(btn => {
-  btn.addEventListener('click', evt => {
-    const clicked = evt.currentTarget;
+const navButtons = document.querySelectorAll('.bottomNav .navBtn');
+const bottomNav = document.querySelector('.bottomNav');
+const moodButtonNav = document.getElementById('moodButtonNav');
 
-    navButtons.forEach(b => b.classList.remove('active'));
-    clicked.classList.add('active');
+// Switch + Hide bottom nav
+function showSection(section) {
+  Object.entries(tabSections).forEach(([key, el]) => {
+    el.style.display = (key === section) ? 'block' : 'none';
   });
+
+  navButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-section') === section);
+  });
+
+  // Hide bottom nav on log tab, show otherwise
+  if (section === 'log') {
+    bottomNav.style.display = 'none';
+    moodButtonNav.style.display = 'flex';
+  } else {
+    bottomNav.style.display = 'flex';
+    moodButtonNav.style.display = 'none';
+  }
+}
+
+// Nav button click listeners
+navButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.getAttribute('data-section');
+    showSection(target);
+  });
+});
+
+// On startup: show statistics tab, hide moodButton, show bottom nav
+window.addEventListener('DOMContentLoaded', () => {
+  showSection('statistics');
 });

@@ -29,133 +29,21 @@
 
   <!--Main-->
   <main>
-    <!--Greeting-->
-    <section id="greetingContainer">
-      <h2>
-        <span id="timeofday"></span>
-        <span id="nameResult"></span>
-      </h2>
-    </section>
+    <!----- Statistics Section (Default Active) ----->
+    <section id="statisticsSection" class="tabSection active" style="display: block;">
+      <!--Greeting-->
+      <section id="greetingContainer">
+        <h2>
+          <span id="timeofday"></span>
+          <span id="nameResult"></span>
+        </h2>
+      </section>
 
-    <!--User Name Input-->
-    <section id="infoContainer" class="collectInfoForm">
-      <form>
-        <h4>Enter Your Name:</h4>
-        <input id="name" type="text" name="name" placeholder="Enter name...">
-      </form>
-      <button id="submitbutton" type="button" onclick="checkForm()">Submit</button>
-    </section>
-
-    <!--Mood Slider-->
-    <section id="m1" class="moodContent">
-      <div id="moodSliderContainer">
-        <h3>How do you feel today?</h3>
-        <div id="emojiGallerySlide"></div>
-        <input id="rangeSlider" type="range" value="0" min="0" max="8">
-      </div>
-    </section>
-
-    <!--Triggers-->
-    <section id="moodForm">
-      <div id="triggers">
-        <!--Sleep-->
-        <!--Start of Code https://www.w3schools.com/howto/howto_js_accordion.asp-->
-        <div class="accordion active">
-          <button class="accordionHeader">Sleep</button>
-          <div class="accordionContent active">
-            <label class="sleepInput">Sleep Start: <input type="time" id="sleepStart"></label>
-            <label class="sleepInput">Sleep End: <input type="time" id="sleepEnd"></label>
-            <label class="sleepInput">Sleep Date: <input type="date" id="sleepDateStart"></label>
-          </div>
-        </div>
-        <!--End of Code https://www.w3schools.com/howto/howto_js_accordion.asp-->
-
-        <!--Exercise-->
-        <div class="accordion active">
-          <button class="accordionHeader">Exercise</button>
-          <div class="accordionContent active">
-            <button class="triggerButton" data-type="exercise" data-value="cycling">Cycling</button>
-            <button class="triggerButton" data-type="exercise" data-value="baseball">Baseball</button>
-            <button class="triggerButton" data-type="exercise" data-value="running">Running</button>
-            <button class="triggerButton" data-type="exercise" data-value="swimming">Swimming</button>
-            <button class="triggerButton" data-type="exercise" data-value="snowboarding">Snowboarding</button>
-            <button class="triggerButton" data-type="exercise" data-value="skating">Skating</button>
-            <button class="triggerButton" data-type="exercise" data-value="hiking">Hiking</button>
-            <button class="triggerButton" data-type="exercise" data-value="football">Football</button>
-            <button class="triggerButton" data-type="exercise" data-value="basketball">Basketball</button>
-          </div>
-        </div>
-
-        <!--Hobby-->
-        <div class="accordion active">
-          <button class="accordionHeader">Hobby</button>
-          <div class="accordionContent active">
-            <button class="triggerButton" data-type="hobby" data-value="reading">Reading</button>
-            <button class="triggerButton" data-type="hobby" data-value="music">Music</button>
-            <button class="triggerButton" data-type="hobby" data-value="gaming">Gaming</button>
-            <button class="triggerButton" data-type="hobby" data-value="tv shows">TV Shows</button>
-            <button class="triggerButton" data-type="hobby" data-value="cooking">Cooking</button>
-            <button class="triggerButton" data-type="hobby" data-value="chess">Chess</button>
-            <button class="triggerButton" data-type="hobby" data-value="art">Art</button>
-          </div>
-        </div>
-
-        <!--Meal-->
-        <div class="accordion active">
-          <button class="accordionHeader">Meal</button>
-          <div class="accordionContent active">
-            <button class="triggerButton" data-type="meal" data-value="breakfast">Breakfast</button>
-            <button class="triggerButton" data-type="meal" data-value="lunch">Lunch</button>
-            <button class="triggerButton" data-type="meal" data-value="dinner">Dinner</button>
-            <button class="triggerButton" data-type="meal" data-value="midnightsnack">Midnight Snack</button>
-          </div>
-        </div>
-
-        <!--Social-->
-        <div class="accordion active">
-          <button class="accordionHeader">Social</button>
-          <div class="accordionContent active">
-            <button class="triggerButton" data-type="social" data-value="alone">Alone</button>
-            <button class="triggerButton" data-type="social" data-value="friends">Friends</button>
-            <button class="triggerButton" data-type="social" data-value="family">Family</button>
-            <button class="triggerButton" data-type="social" data-value="partner">Partner</button>
-          </div>
-        </div>
-
-        <!--Weather-->
-        <div class="accordion active">
-          <button class="accordionHeader">Weather</button>
-          <div class="accordionContent active">
-            <button class="triggerButton" data-type="weather" data-value="sunny">Sunny</button>
-            <button class="triggerButton" data-type="weather" data-value="rainy">Rainy</button>
-            <button class="triggerButton" data-type="weather" data-value="cloudy">Cloudy</button>
-            <button class="triggerButton" data-type="weather" data-value="windy">Windy</button>
-            <button class="triggerButton" data-type="weather" data-value="stormy">Stormy</button>
-            <button class="triggerButton" data-type="weather" data-value="snowy">Snowy</button>
-          </div>
-        </div>
-
-        <!--Period-->
-        <div class="accordion active">
-          <button class="accordionHeader">Period</button>
-          <div class="accordionContent active">
-            <label class="switch">
-              <input type="checkbox" id="periodToggle">
-              <span class="slider round"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!--Suggestions-->
-      <div id="suggestionOutput">
-        <h3>Suggestion:</h3>
+      <div id="suggestionOutput" class="moodContent">
+        <h3><i class="fas fa-lightbulb"></i>Suggestion:</h3>
         <p id="suggestionText">Generating...</p>
       </div>
-    </section>
 
-    <!--Mood Records-->
-    <section>
       <div id="m3" class="moodContent">
         <h3>Monthly Mood Chart</h3>
         <div id="chartContainer">
@@ -168,19 +56,165 @@
         <div id="recordedDayCounter"></div>
       </div>
     </section>
+
+    
+    <!----- Log Section ----->
+    <section id="logSection" class="tabSection" style="display: none;">
+      <!-- Back Button in Log Section -->
+      <button id="backToStatsBtn" class="backBtn" type="button" aria-label="Back to Statistics">
+        <i class="fa-solid fa-angle-left"></i>
+      </button>
+
+      <!--Mood Slider-->
+      <section id="m1" class="moodContent">
+        <div id="moodSliderContainer">
+          <h3>How do you feel today?</h3>
+          <div id="emojiGallerySlide"></div>
+          <input id="rangeSlider" type="range" value="0" min="0" max="8">
+        </div>
+      </section>
+      <!--Triggers-->
+      <section id="moodForm">
+        <div id="triggers">
+          <!--Sleep-->
+          <div class="accordion active">
+            <button class="accordionHeader">Sleep</button>
+            <div class="accordionContent active">
+              <label class="sleepInput">Sleep Start: <input type="time" id="sleepStart"></label>
+              <label class="sleepInput">Sleep End: <input type="time" id="sleepEnd"></label>
+              <label class="sleepInput">Sleep Date: <input type="date" id="sleepDateStart"></label>
+            </div>
+          </div>
+          <!--Exercise-->
+          <div class="accordion active">
+            <button class="accordionHeader">Exercise</button>
+            <div class="accordionContent active">
+              <button class="triggerButton" data-type="exercise" data-value="cycling">
+                <i class="fas fa-bicycle"></i> Cycling
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="baseball">
+                <i class="fas fa-baseball-ball"></i> Baseball
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="running">
+                <i class="fas fa-running"></i> Running
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="swimming">
+                <i class="fas fa-swimmer"></i> Swimming
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="yoga">
+                <i class="fas fa-child"></i> Yoga
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="dancing">
+                <i class="fas fa-music"></i> Dancing
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="walking">
+                <i class="fas fa-walking"></i> Walking
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="hiking">
+                <i class="fas fa-mountain"></i> Hiking
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="football">
+                <i class="fas fa-football-ball"></i> Football
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="basketball">
+                <i class="fas fa-basketball-ball"></i> Basketball
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="weight lifting">
+                <i class="fas fa-dumbbell"></i> Weight Lifting
+              </button>
+              <button class="triggerButton" data-type="exercise" data-value="stretching">
+                <i class="fas fa-child"></i> Stretching
+              </button>
+            </div>
+          </div>
+          <!--Hobby-->
+          <div class="accordion active">
+            <button class="accordionHeader">Hobby</button>
+            <div class="accordionContent active">
+              <button class="triggerButton" data-type="hobby" data-value="reading"><i class="fas fa-book"></i> Reading</button>
+              <button class="triggerButton" data-type="hobby" data-value="music"><i class="fas fa-music"></i> Music</button>
+              <button class="triggerButton" data-type="hobby" data-value="gaming"><i class="fas fa-gamepad"></i> Gaming</button>
+              <button class="triggerButton" data-type="hobby" data-value="tv shows"><i class="fas fa-tv"></i> TV Shows</button>
+              <button class="triggerButton" data-type="hobby" data-value="cooking"><i class="fas fa-utensils"></i> Cooking</button>
+              <button class="triggerButton" data-type="hobby" data-value="art"><i class="fas fa-paint-brush"></i> Art</button>
+              <button class="triggerButton" data-type="hobby" data-value="writing"><i class="fas fa-pen"></i> Writing</button>
+              <button class="triggerButton" data-type="hobby" data-value="puzzles"><i class="fas fa-puzzle-piece"></i> Puzzles</button>
+            </div>
+          </div>
+          <!--Meal-->
+          <div class="accordion active">
+            <button class="accordionHeader">Meal</button>
+            <div class="accordionContent active">
+              <button class="triggerButton" data-type="meal" data-value="breakfast"><i class="fas fa-coffee"></i> Breakfast</button>
+              <button class="triggerButton" data-type="meal" data-value="lunch"><i class="fas fa-hamburger"></i> Lunch</button>
+              <button class="triggerButton" data-type="meal" data-value="dinner"><i class="fas fa-utensils"></i> Dinner</button>
+              <button class="triggerButton" data-type="meal" data-value="snack"><i class="fas fa-apple-alt"></i> Snack</button>
+              <button class="triggerButton" data-type="meal" data-value="midnightsnack"><i class="fas fa-moon"></i> Midnight Snack</button>
+            </div>
+          </div>
+          <!--Social-->
+          <div class="accordion active">
+            <button class="accordionHeader">Social</button>
+            <div class="accordionContent active">
+              <button class="triggerButton" data-type="social" data-value="alone"><i class="fas fa-user"></i> Alone</button>
+              <button class="triggerButton" data-type="social" data-value="friends"><i class="fas fa-user-friends"></i> Friends</button>
+              <button class="triggerButton" data-type="social" data-value="family"><i class="fas fa-users"></i> Family</button>
+              <button class="triggerButton" data-type="social" data-value="partner"><i class="fas fa-heart"></i> Partner</button>
+              <button class="triggerButton" data-type="social" data-value="work"><i class="fas fa-briefcase"></i> Coworkers</button>
+              <button class="triggerButton" data-type="social" data-value="pets"><i class="fas fa-dog"></i> Pets</button>
+              <button class="triggerButton" data-type="social" data-value="online"><i class="fas fa-globe"></i> Online</button>
+            </div>
+          </div>
+          <!--Weather-->
+          <div class="accordion active">
+            <button class="accordionHeader">Weather</button>
+            <div class="accordionContent active">
+              <button class="triggerButton" data-type="weather" data-value="sunny"><i class="fas fa-sun"></i> Sunny</button>
+              <button class="triggerButton" data-type="weather" data-value="rainy"><i class="fas fa-cloud-showers-heavy"></i> Rainy</button>
+              <button class="triggerButton" data-type="weather" data-value="cloudy"><i class="fas fa-cloud"></i> Cloudy</button>
+              <button class="triggerButton" data-type="weather" data-value="windy"><i class="fas fa-wind"></i> Windy</button>
+              <button class="triggerButton" data-type="weather" data-value="stormy"><i class="fas fa-bolt"></i> Stormy</button>
+              <button class="triggerButton" data-type="weather" data-value="snowy"><i class="fas fa-snowflake"></i> Snowy</button>
+              <button class="triggerButton" data-type="weather" data-value="foggy"><i class="fas fa-smog"></i> Foggy</button>
+              <button class="triggerButton" data-type="weather" data-value="hot"><i class="fas fa-thermometer-full"></i> Hot</button>
+              <button class="triggerButton" data-type="weather" data-value="cold"><i class="fas fa-icicles"></i> Cold</button>
+            </div>
+          </div>
+          <!--Period-->
+          <div class="accordion active">
+            <button class="accordionHeader">Period</button>
+            <div class="accordionContent active">
+              <label class="switch">
+                <input type="checkbox" id="periodToggle">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!----- Profile Section ----->
+    <section id="profileSection" class="tabSection" style="display: none;">
+      <!--User Name Input-->
+      <section id="infoContainer" class="collectInfoForm">
+        <form>
+          <h4>Enter Your Name:</h4>
+          <input id="name" type="text" name="name" placeholder="Enter name...">
+        </form>
+        <button id="submitbutton" type="button" onclick="checkForm()">Submit</button>
+      </section>
+    </section>
   </main>
 
   <!--Bottom Nav-->
   <nav class="bottomNav">
-
-    <button class="navBtn" data-section="stats" aria-label="Statistics">
-      <i class="fas fa-lightbulb"></i>
+    <button class="navBtn" data-section="statistics" aria-label="Statistics">
+      <i class="fa-solid fa-chart-line"></i>
     </button>
-
     <button class="navBtn float active" data-section="log" aria-label="Record Mood">
       <i class="fas fa-plus"></i>
     </button>
-
     <button class="navBtn" data-section="profile" aria-label="Profile">
       <i class="fas fa-user"></i>
     </button>

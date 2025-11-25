@@ -132,6 +132,7 @@ button{
 /*------------------Mood Slider----------------------*/
 #m1{
   padding: 18px;
+  margin-top: 60px;
   margin-bottom: 18px;
   background-color: rgba(202, 192, 211, 0.4);
   border-radius: 20px;
@@ -178,6 +179,12 @@ img{
 }
   
 /*------------------Triggers----------------------*/
+.triggerButton i {
+  margin-right: 7px;
+  font-size: 1.1em;
+  vertical-align: middle;
+}
+
 .accordion{
   margin-bottom: 18px;
 }
@@ -288,18 +295,7 @@ img{
   transform: translateX(26px);
 }
 
-/*------------------Suggestion----------------------*/
-#suggestionOutput{
-  color: #414141;
-}
-
-#suggestionText{
-  font-size: 0.9rem;
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-}
-
-/*------------------Mood Records----------------------*/
+/*------------------Mood Records + Suggestion----------------------*/
 #m2, #m3 {
   padding: 18px;
   background-color: #fff;
@@ -316,6 +312,33 @@ img{
   font-weight: 500;
 }
 
+#suggestionOutput {
+  padding: 18px;
+  background-color: #627954;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 18px;
+  color: #ffffff;
+}
+
+#suggestionOutput h3 {
+  font-size: 1rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#suggestionText{
+  text-align: left;
+  font-size: 0.9rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
 /*------------------Navbar----------------------*/
 /* Bottom Navbar */
 .bottomNav {
@@ -324,7 +347,7 @@ img{
   left: 0;
   width: 100%;
   height: 70px;
-  background: #fff;
+  background: #d3ddce;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -343,12 +366,17 @@ img{
   justify-content: center;
   transition: 0.25s ease;
   font-size: 1.6rem;
-  color: #414141;
+  color: #ffffff;
 }
 
-.bottomNav .navBtn:active:not(.float).active {
+.bottomNav .navBtn.active {
   color: #627954;
-  transform: scale(1.2);
+}
+
+.bottomNav .float.active,
+.bottomNav .navBtn.float.active {
+  background: #627954;
+  color: #fff;
 }
 
 .bottomNav .float i {
@@ -363,4 +391,32 @@ img{
   height: 60px;
   border-radius: 25px;
   margin-top: -45px;
+}
+
+.bottomNav.hidden {
+  display: none !important;
+}
+
+#moodButtonNav {
+  display: none;
+}
+
+/*------------------Back Button----------------------*/
+.backBtn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  margin-bottom: 25px;
+  border: none;
+  background: none;
+  color: #414141;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 100;
+  padding: 0.25em 0.8em;
+  transition: background 0.2s;
+}
+
+.backBtn:hover{
+  color: #627954;
 }
