@@ -448,10 +448,6 @@ img{
   transition: background 0.2s;
 }
 
-.backBtn:hover{
-  color: #627954;
-}
-
 /*------------------Loader----------------------*/
 #loaderContainer {
   position: fixed;
@@ -493,6 +489,100 @@ img{
   color: #fff;
 }
 
+
+/*------------------Emotional Recognition----------------------*/
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: auto;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f5;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.modalContent {
+  width: 90%;
+  max-width: 500px;
+  background: #414141;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+}
+
+#checkMoodBackBtn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  border: none;
+  background: none;
+  background-color: #d3ddce;
+  border-radius: 15px;
+  color: #627954;
+  font-size: 1.2rem;
+  z-index: 100;
+  padding: 0.4em 0.8em;
+  transition: background 0.2s, transform 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+#checkMoodBackBtn:hover {
+  background-color: #c8d3c0;
+}
+
+#checkMoodBackBtn:active {
+  transform: scale(0.98);
+}
+
+#checkMoodBtn {
+  margin: 20px;
+  padding: 0.8em 1.2em;
+  border-radius: 8px;
+  border: none;
+  background-color: #627954;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#checkMoodBtn:hover {
+  background-color: #536845;
+}
+
+#canvasContainer {
+  margin-top: 48px; 
+}
+
+.helperText {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .modalContent {
+    padding: 16px;
+  }
+
+  #checkMoodBackBtn {
+    font-size: 1rem;
+    padding: 0.35em 0.7em;
+  }
+}
 
 /*----------------------------------------Dark Mode----------------------------------------*/
 

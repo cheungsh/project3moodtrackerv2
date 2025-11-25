@@ -439,3 +439,159 @@ function hideLoader() {
   triggerButtons.forEach(btn => btn.disabled = false);
   moodbutton.disabled = false;
 }
+
+
+/*-------------------Emotional Recognition---------------------*/
+let capture;
+let captureWidth = 640;
+let captureHeight = 480;
+let faceapi;
+let detections = [];
+let emotions = ["neutral", "happy", "sad", "angry", "fearful", "disgusted", "surprised"];
+let moodStarted = false;
+let canvasRef = null;
+
+const checkMoodBtn = document.getElementById("checkMoodBtn");
+const checkMoodBackBtn = document.getElementById("checkMoodBackBtn");
+const moodModal = document.getElementById("moodModal");
+const canvasContainer = document.getElementById("canvasContainer");
+
+checkMoodBtn.addEventListener("click", () => {
+  openMoodModal();
+});
+checkMoodBackBtn.addEventListener("click", () => {
+  closeMoodModal();
+});
+
+function openMoodModal() {
+  moodModal.style.display = "flex";
+  moodModal.setAttribute("aria-hidden", "false");
+
+  if (!moodStarted) {
+    startMoodCheck();
+    moodStarted = true;
+  } else {
+    loop(); // resume draw loop if already started
+  }
+
+  // Resize pixel canvas to match CSS container width after modal is visible
+  setTimeout(resizeCanvasToContainer, 0);
+}
+
+function closeMoodModal() {
+  moodModal.style.display = "none";
+  moodModal.setAttribute("aria-hidden", "true");
+  noLoop();
+
+  // Stop webcam tracks and clean up capture
+  if (capture && capture.elt && capture.elt.srcObject) {
+    const tracks = capture.elt.srcObject.getTracks();
+    tracks.forEach(t => t.stop());
+  }
+  if (capture) {
+    capture.remove();
+    capture = null;
+  }
+
+  clear();
+  moodStarted = false;
+}
+
+function setup() {
+  pixelDensity(1); // prevent HiDPI scaling issues
+  canvasRef = createCanvas(captureWidth, captureHeight);
+  canvasRef.parent("canvasContainer");
+  noLoop();
+
+  // Initialize webcam capture after p5 is ready
+  capture = createCapture(VIDEO, () => {});
+  capture.size(captureWidth, captureHeight);
+  capture.hide(); // hide default video element to control display via canvas
+}
+
+function startMoodCheck() {
+  if (!capture) return;
+
+  capture.elt.onloadeddata = () => {
+    const faceOptions = {
+      withLandmarks: true,
+      withExpressions: true,
+      withDescriptors: false,
+    };
+    faceapi = ml5.faceApi(capture, faceOptions, () => {
+      faceapi.detect(gotFaces);
+      loop(); // start draw loop
+    });
+  };
+}
+
+function gotFaces(error, result) {
+  if (error) {
+    console.error(error);
+    return;
+  }
+  detections = result || [];
+  if (faceapi) faceapi.detect(gotFaces);
+}
+
+function draw() {
+  if (!moodStarted) return;
+
+  background(0);
+  if (capture) {
+    image(capture, 0, 0, width, height);
+  }
+
+  push();
+  fill('limegreen');
+  stroke('limegreen');
+  strokeWeight(1);
+
+  if (detections.length > 0) {
+    for (let i = 0; i < detections.length; i++) {
+      const d = detections[i];
+
+      // Draw facial landmarks
+      const points = d.landmarks.positions;
+      for (let j = 0; j < points.length; j++) {
+        const pt = points[j];
+        circle(pt._x, pt._y, 5);
+      }
+
+      // Draw emotion bars
+      noStroke();
+      fill(255);
+      textSize(14);
+      let startY = 30;
+      let startX = 40;
+      for (let k = 0; k < emotions.length; k++) {
+        const emo = emotions[k];
+        const val = d.expressions[emo] || 0;
+        fill(255);
+        text(`${emo}: ${nf(val, 1, 2)}`, startX, startY + 30 * k);
+        fill('limegreen');
+        rect(startX, startY + 30 * k + 6, val * 120, 10);
+      }
+    }
+  }
+
+  pop();
+}
+function resizeCanvasToContainer() {
+  const container = document.getElementById("canvasContainer");
+  if (!container) return;
+
+  const displayW = container.clientWidth;
+  const aspect = captureWidth / captureHeight;
+  const displayH = Math.round(displayW / aspect);
+
+  resizeCanvas(displayW, displayH);
+
+  if (capture) capture.size(displayW, displayH);
+}
+
+function windowResized() {
+  if (moodModal.style.display === "flex") {
+    resizeCanvasToContainer();
+  }
+}

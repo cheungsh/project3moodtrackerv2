@@ -14,6 +14,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <!--Emotion Recognition P5.JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ml5js/Intro-ML-Arts-IMA@ml5-build-10-7-19/ml5_build/ml5.min.js"></script>
+
   <title>Mood Tracker</title>
 </head>
 
@@ -213,8 +218,17 @@
 
     <!----- Profile Section ----->
     <section id="profileSection" class="tabSection" style="display: none;">
-
-      
+      <button id="checkMoodBtn">Check Your Mood Quickly</button>
+      <div id="moodModal" class="modal">
+        <div class="modalContent">
+          <button id="checkMoodBackBtn" class="checkMoodBackBtn" type="button" aria-label="Back to Profile">
+            <i class="fa-solid fa-angle-left"></i>
+          </button>
+          <!-- Container for p5.js canvas -->
+           <div id="canvasContainer"></div>
+           <p class="helperText">Allow camera access enter your face in the frame.</p>
+          </div>
+        </div>
     </section>
 
     <!----- Loading Screen ----->
