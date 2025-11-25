@@ -538,10 +538,6 @@ canvas {
   cursor: pointer;
 }
 
-#checkMoodBackBtn:hover {
-  background-color: #c8d3c0;
-}
-
 #checkMoodBackBtn:active {
   transform: scale(0.98);
 }
@@ -558,21 +554,6 @@ canvas {
   transition: background 0.2s;
 }
 
-#checkMoodBtn:hover {
-  background-color: #536845;
-}
-
-#canvasContainer {
-  margin-top: 48px; 
-}
-
-.helperText {
-  color: #e0e0e0;
-  font-size: 0.9rem;
-  margin-top: 12px;
-  opacity: 0.9;
-}
-
 @media (max-width: 480px) {
   .modalContent {
     padding: 16px;
@@ -583,6 +564,7 @@ canvas {
     padding: 0.35em 0.7em;
   }
 }
+*/
 
 /*----------------------------------------Dark Mode----------------------------------------*/
 

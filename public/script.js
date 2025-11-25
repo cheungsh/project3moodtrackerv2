@@ -441,14 +441,17 @@ function hideLoader() {
 }
 
 
-/*-------------------Emotional Recognition---------------------*/
+/*-------------------Emotional Recognition (Rebuilt per request)---------------------*/
 let capture;
-let captureWidth = 640;
-let captureHeight = 480;
+let captureWidth = 360;
+let captureHeight = 500;
+
+let emotions = ["neutral","happy","sad","angry","fearful","disgusted","surprised"];
+
 let faceapi;
 let detections = [];
-let emotions = ["neutral", "happy", "sad", "angry", "fearful", "disgusted", "surprised"];
-let moodStarted = false;
+
+let moodActive = false;
 let canvasRef = null;
 
 const checkMoodBtn = document.getElementById("checkMoodBtn");
@@ -456,142 +459,141 @@ const checkMoodBackBtn = document.getElementById("checkMoodBackBtn");
 const moodModal = document.getElementById("moodModal");
 const canvasContainer = document.getElementById("canvasContainer");
 
-checkMoodBtn.addEventListener("click", () => {
-  openMoodModal();
-});
-checkMoodBackBtn.addEventListener("click", () => {
-  closeMoodModal();
-});
+if (checkMoodBtn) checkMoodBtn.addEventListener("click", openMoodModal);
+if (checkMoodBackBtn) checkMoodBackBtn.addEventListener("click", closeMoodModal);
 
 function openMoodModal() {
-  moodModal.style.display = "flex";
-  moodModal.setAttribute("aria-hidden", "false");
-
-  if (!moodStarted) {
-    startMoodCheck();
-    moodStarted = true;
-  } else {
-    loop(); // resume draw loop if already started
+  if (moodModal) {
+    moodModal.style.display = "flex";
+    moodModal.setAttribute("aria-hidden", "false");
   }
-
-  // Resize pixel canvas to match CSS container width after modal is visible
-  setTimeout(resizeCanvasToContainer, 0);
+  moodActive = true;
+  resizeCanvasToContainer();
 }
 
 function closeMoodModal() {
-  moodModal.style.display = "none";
-  moodModal.setAttribute("aria-hidden", "true");
-  noLoop();
-
-  // Stop webcam tracks and clean up capture
-  if (capture && capture.elt && capture.elt.srcObject) {
-    const tracks = capture.elt.srcObject.getTracks();
-    tracks.forEach(t => t.stop());
+  if (moodModal) {
+    moodModal.style.display = "none";
+    moodModal.setAttribute("aria-hidden", "true");
   }
-  if (capture) {
-    capture.remove();
-    capture = null;
-  }
-
-  clear();
-  moodStarted = false;
+  moodActive = false;
 }
 
+/* ---------------- p5 setup ---------------- */
 function setup() {
-  pixelDensity(1); // prevent HiDPI scaling issues
+  pixelDensity(1);
   canvasRef = createCanvas(captureWidth, captureHeight);
-  canvasRef.parent("canvasContainer");
-  noLoop();
+  if (canvasContainer) canvasRef.parent("canvasContainer");
 
-  // Initialize webcam capture after p5 is ready
-  capture = createCapture(VIDEO, () => {});
+  capture = createCapture(VIDEO);
   capture.size(captureWidth, captureHeight);
-  capture.hide(); // hide default video element to control display via canvas
-}
 
-function startMoodCheck() {
-  if (!capture) return;
+  capture.position(0, 0);
+  capture.hide();
 
-  capture.elt.onloadeddata = () => {
-    const faceOptions = {
-      withLandmarks: true,
-      withExpressions: true,
-      withDescriptors: false,
-    };
-    faceapi = ml5.faceApi(capture, faceOptions, () => {
-      faceapi.detect(gotFaces);
-      loop(); // start draw loop
-    });
+  const faceOptions = {
+    withLandmarks: true,
+    withExpressions: true,
+    withDescriptors: false
   };
+  faceapi = ml5.faceApi(capture, faceOptions, faceReady);
 }
 
-function gotFaces(error, result) {
-  if (error) {
-    console.error(error);
+function faceReady() {
+  faceapi.detect(gotFaces);
+}
+
+function gotFaces(err, result) {
+  if (err) {
+    console.error(err);
     return;
   }
   detections = result || [];
-  if (faceapi) faceapi.detect(gotFaces);
+  console.log(detections);
+
+  if (faceapi && faceapi.detect) {
+    faceapi.detect(gotFaces);
+  }
 }
 
 function draw() {
-  if (!moodStarted) return;
-
-  background(0);
-  if (capture) {
-    image(capture, 0, 0, width, height);
+  if (!moodActive) {
+    clear();
+    return;
   }
 
-  push();
-  fill('limegreen');
-  stroke('limegreen');
-  strokeWeight(1);
+  background(0);
 
-  if (detections.length > 0) {
-    for (let i = 0; i < detections.length; i++) {
-      const d = detections[i];
+  if (capture && capture.loadedmetadata !== false) {
+    capture.loadPixels();
 
-      // Draw facial landmarks
-      const points = d.landmarks.positions;
-      for (let j = 0; j < points.length; j++) {
-        const pt = points[j];
-        circle(pt._x, pt._y, 5);
-      }
-
-      // Draw emotion bars
+    if (capture.pixels && capture.pixels.length > 0) {
       noStroke();
-      fill(255);
-      textSize(14);
-      let startY = 30;
-      let startX = 40;
-      for (let k = 0; k < emotions.length; k++) {
-        const emo = emotions[k];
-        const val = d.expressions[emo] || 0;
-        fill(255);
-        text(`${emo}: ${nf(val, 1, 2)}`, startX, startY + 30 * k);
-        fill('limegreen');
-        rect(startX, startY + 30 * k + 6, val * 120, 10);
+      for (let y = 0; y < capture.height; y += 5) {
+        for (let x = 0; x < capture.width; x += 5) {
+          const pixelIndex = (x + y * capture.width) * 4;
+          const r = capture.pixels[pixelIndex + 0];
+          const g = capture.pixels[pixelIndex + 1];
+          const b = capture.pixels[pixelIndex + 2];
+
+          const avg = (r + g + b) / 3;
+          const diameter = map(avg, 0, 255, 1, 7);
+
+          fill(r, g, b);
+          circle(x, y, diameter);
+        }
       }
+    } else {
+      image(capture, 0, 0, width, height);
     }
   }
 
-  pop();
+  if (detections && detections.length > 0) {
+    for (let i = 0; i < detections.length; i++) {
+      const d = detections[i];
+      const points = d.landmarks.positions;
+
+      push();
+      fill('green');
+      noStroke();
+      for (let j = 0; j < points.length; j++) {
+        circle(points[j]._x, points[j]._y, 5);
+      }
+      pop();
+
+      push();
+      fill(255);
+      textSize(14);
+      let baseX = 40;
+      let baseY = 30;
+      for (let k = 0; k < emotions.length; k++) {
+        const thisemotion = emotions[k];
+        const thisemotionlevel = d.expressions[thisemotion] || 0;
+
+        fill(255);
+        text(thisemotion + " value: " + thisemotionlevel, baseX, baseY + 30 * k);
+
+        fill('green');
+        rect(baseX, baseY + 30 * k, thisemotionlevel * 100, 10);
+      }
+      pop();
+    }
+  }
 }
+
 function resizeCanvasToContainer() {
   const container = document.getElementById("canvasContainer");
   if (!container) return;
 
-  const displayW = container.clientWidth;
+  const displayW = container.clientWidth || captureWidth;
   const aspect = captureWidth / captureHeight;
   const displayH = Math.round(displayW / aspect);
 
   resizeCanvas(displayW, displayH);
-
-  if (capture) capture.size(displayW, displayH);
 }
 
 function windowResized() {
-  if (moodModal.style.display === "flex") {
+  if (moodModal && moodModal.style.display === "flex") {
     resizeCanvasToContainer();
   }
 }
