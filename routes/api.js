@@ -57,8 +57,8 @@ router.post('/mood', async (req, res) => {
     They are${period ? "" : " not"} on their period.
     
     Generate a kind, specific, helpful suggestion to enhance their mood if they chose negative moods. 
-    If they feel happy then encourage them to keep doing what makes them feel happy. 
-    Use supportive language. 
+    Generate encouragements to encourage them to keep doing what makes them feel happy if they chose positive moods. 
+    Sound supportive, friendly and causual. 
     Limit your response to a maximum of 3 sentences only.
     `
 

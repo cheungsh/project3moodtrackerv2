@@ -47,6 +47,14 @@
             <i class="fa-solid fa-moon"></i>
           </button>
         </div>
+        <!--User Name Input-->
+        <section id="infoContainer" class="collectInfoForm">
+          <form>
+            <h4>Enter Your Name:</h4>
+            <input id="name" type="text" name="name" placeholder="Enter name...">
+          </form>
+          <button id="submitbutton" type="button" onclick="checkForm()">Submit</button>
+        </section>
       </div>
 
       <div id="suggestionOutput" class="moodContent">
@@ -206,15 +214,14 @@
     <!----- Profile Section ----->
     <section id="profileSection" class="tabSection" style="display: none;">
 
-      <!--User Name Input-->
-      <section id="infoContainer" class="collectInfoForm">
-        <form>
-          <h4>Enter Your Name:</h4>
-          <input id="name" type="text" name="name" placeholder="Enter name...">
-        </form>
-        <button id="submitbutton" type="button" onclick="checkForm()">Submit</button>
-      </section>
+      
     </section>
+
+    <!----- Loading Screen ----->
+    <div id="loaderContainer">
+      <div id="loader"></div>
+      <h3>Loading...</h3>
+    </div>
   </main>
 
   <!--Bottom Nav-->

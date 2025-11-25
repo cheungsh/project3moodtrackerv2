@@ -2,6 +2,7 @@ const today = new Date();
 const hourNow = today.getHours();
 const minNow = today.getMinutes();
 const secNow = today.getSeconds();
+const triggerButtons = document.querySelectorAll('.triggerButton');
 
 /* ---------- User Name ----------*/
 const userName = document.getElementById("nameResult");
@@ -263,6 +264,8 @@ if (periodToggle) periodToggle.addEventListener('change', e => triggers.period =
 
 /* ---------- Gather Data for Backend Send ----------*/
 moodbutton.addEventListener('click', async () => {
+  showLoader();
+
   const selectedMood = moodcomment.innerText;
   const name = localStorage.getItem('name') || 'Anonymous';
   const { sleepHours, exercise, hobby, meal, social, weather, period } = triggers;
@@ -282,11 +285,6 @@ moodbutton.addEventListener('click', async () => {
   });
   // Return to statistics tab after submit
   showSection('statistics');
-
-  // Disable all trigger buttons after submitting
-  const triggerButtons = document.querySelectorAll('.triggerButton');
-  triggerButtons.forEach(btn => btn.disabled = true);
-  moodbutton.disabled = true;
 
   // Clear all previous selections for next submission
   triggerButtons.forEach(btn => btn.classList.remove('active'));
@@ -329,17 +327,18 @@ async function sendMoodData(data) {
       if (respData.suggestions) {
         document.getElementById('suggestionText').innerText = respData.suggestions;
       } else {
-        document.getElementById('suggestionText').innerText = "No suggestion available.";
+        document.getElementById('suggestionText').innerText = "Sorry, no suggestions available.";
       }
       console.log('Mood data saved to MongoDB.');
     } else {
-      document.getElementById('suggestionText').innerText = "Failed to get suggestion from server.";
+      document.getElementById('suggestionText').innerText = "Failed to get suggestion, try again.";
       console.error('Failed to save mood data.');
     }
   } catch (err) {
     document.getElementById('suggestionText').innerText = "Error connecting to server.";
     console.error('Error sending mood data:', err);
   }
+  hideLoader();
 }
 
 /* ---------- Bottom Navbar ----------*/
@@ -424,4 +423,19 @@ function toggle() {
     mode = bdy.classList.contains("dark-mode") ? "dark" : "light";
     localStorage.setItem("mode", mode);
     updateChartForDarkMode(mode === "dark");
+}
+
+/*-------------------Loading Screen---------------------*/
+const loaderContainer = document.getElementById("loaderContainer");
+
+function showLoader() {
+  loaderContainer.style.display = "flex";
+  triggerButtons.forEach(btn => btn.disabled = false);
+  moodbutton.disabled = true;
+}
+
+function hideLoader() {
+  loaderContainer.style.display = "none";
+  triggerButtons.forEach(btn => btn.disabled = false);
+  moodbutton.disabled = false;
 }

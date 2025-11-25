@@ -452,6 +452,47 @@ img{
   color: #627954;
 }
 
+/*------------------Loader----------------------*/
+#loaderContainer {
+  position: fixed;
+  inset: 0;
+  background: #627954;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  z-index: 9999;
+}
+
+#loader {
+  width: 60%;
+  height: 30%;
+  padding: 0 12px;
+  box-sizing: border-box;
+  background:
+    linear-gradient(#fff 0 0) 0    0/20px 70px,
+    linear-gradient(#fff 0 0) 100% 0/20px 70px,
+    radial-gradient(farthest-side,#fff 90%,#0000) 0 7px/12px 12px content-box,
+    #627954;
+  background-repeat: no-repeat;
+  animation: l3 2s infinite linear;
+}
+
+@keyframes l3{
+  25% {background-position: 0 0   ,100% 100%,100% calc(100% - 5px)}
+  50% {background-position: 0 100%,100% 100%,0    calc(100% - 5px)}
+  75% {background-position: 0 100%,100%    0,100% 5px}
+}
+
+#loaderContainer h3{
+  font-size: 1rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 600;
+  margin:0;
+  color: #fff;
+}
+
 
 /*----------------------------------------Dark Mode----------------------------------------*/
 
@@ -582,3 +623,25 @@ img{
   color: #627954;
 }
 
+/*------------------Loader----------------------*/
+.dark-mode #loaderContainer {
+  background: #d3ddce;
+}
+
+.dark-mode #loader {
+  width: 60%;
+  height: 30%;
+  padding: 0 12px;
+  box-sizing: border-box;
+  background:
+    linear-gradient(#627954 0 0) 0    0/20px 70px,
+    linear-gradient(#627954 0 0) 100% 0/20px 70px,
+    radial-gradient(farthest-side,#627954 90%,#0000) 0 7px/12px 12px content-box,
+    #d3ddce;
+  background-repeat: no-repeat;
+  animation: l3 2s infinite linear;
+}
+
+.dark-mode #loaderContainer h3{
+  color: #627954;
+}
