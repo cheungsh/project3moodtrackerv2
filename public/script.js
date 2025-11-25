@@ -91,7 +91,6 @@ const moodLabels = [
 
 const m1background = document.getElementById("m1");
 const emojiGallerySlide = document.getElementById("emojiGallerySlide");
-const rangeslider = document.getElementById("rangeSlider");
 const moodbutton = document.getElementById("moodButton");
 const moodcomment = document.getElementById("moodComment");
 
@@ -112,17 +111,11 @@ function selectEmoji(selectedIndex) {
       m1background.style.backgroundColor = backgroundColors[i];
       moodcomment.innerHTML = moodLabels[i];
       moodbutton.style.backgroundColor = buttonColors[i];
-      rangeslider.style.backgroundColor = ('--thumb-color', buttonColors[i]);
     } else {
       img.classList.remove("selected");
     }
   });
-   rangeslider.value = selectedIndex;
 }
-
-rangeslider.addEventListener("input", () => {
-  selectEmoji(parseInt(rangeslider.value));
-});
 
 /* ---------- Mood Chart ----------*/
 const ctx = document.getElementById("moodChart");
@@ -363,3 +356,4 @@ navButtons.forEach(btn => {
 window.addEventListener('DOMContentLoaded', () => {
   showSection('statistics');
 });
+
