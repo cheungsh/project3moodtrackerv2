@@ -269,8 +269,6 @@ moodbutton.addEventListener('click', async () => {
   const selectedMood = moodcomment.innerText;
   const name = localStorage.getItem('name') || 'Anonymous';
   const { sleepHours, exercise, hobby, meal, social, weather, period } = triggers;
-  const scannedMoodValue = localStorage.getItem('scannedMoodValue') || '';
-  const scannedStreak = parseInt(localStorage.getItem('scannedDayCounter')) || 0;
 
   // For user feedback: show a loading state while awaiting Gemini suggestion
   document.getElementById('suggestionText').innerText = "Generating...";
@@ -283,10 +281,9 @@ moodbutton.addEventListener('click', async () => {
     name,
     moodValue: selectedMood,
     ...triggers,
-    streak: recordedDayCounter,
-    scannedMoodValue,
-    scannedStreak,  
+    streak: recordedDayCounter
   });
+  
   // Return to statistics tab after submit
   showSection('statistics');
 
@@ -587,7 +584,7 @@ function onFaceDetected(err, result) {
   faceApiInstance.detect(onFaceDetected);
 }
 
-function processScanResults() {
+async function processScanResults() {
   isScanning = false;
   
   if (emotionSamples.length === 0) {
@@ -636,6 +633,13 @@ function processScanResults() {
     scannedCounterElement.innerHTML = scannedDayCounter;
   }
 
+  // Send scanned mood data to backend immediately
+  await sendScannedMoodData({
+    name: localStorage.getItem('name') || 'Anonymous',
+    scannedMoodValue: maxEmotion,
+    scannedStreak: scannedDayCounter
+  });
+
   // Close modal and return to profile
   closeScanModal();
 }
@@ -661,3 +665,49 @@ function closeScanModal() {
 const scannedCounterElement = document.getElementById("scannedDayCounter");
 let scannedDayCounter = parseInt(localStorage.getItem("scannedDayCounter")) || 0;
 scannedCounterElement.innerHTML = scannedDayCounter;
+
+/* ---------- Send Data to Backend ----------*/
+async function sendMoodData(data) {
+  try {
+    const response = await fetch('/mood', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (response.ok) {
+      const respData = await response.json();
+      if (respData.suggestions) {
+        document.getElementById('suggestionText').innerText = respData.suggestions;
+      } else {
+        document.getElementById('suggestionText').innerText = "Sorry, no suggestions available.";
+      }
+      console.log('Mood data saved to MongoDB.');
+    } else {
+      document.getElementById('suggestionText').innerText = "Failed to get suggestion, try again.";
+      console.error('Failed to save mood data.');
+    }
+  } catch (err) {
+    document.getElementById('suggestionText').innerText = "Error connecting to server.";
+    console.error('Error sending mood data:', err);
+  }
+  hideLoader();
+}
+
+/* ---------- Send Scanned Mood Data to Backend ----------*/
+async function sendScannedMoodData(data) {
+  try {
+    const response = await fetch('/scannedMood', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (response.ok) {
+      const respData = await response.json();
+      console.log('Scanned mood data saved to MongoDB:', respData);
+    } else {
+      console.error('Failed to save scanned mood data.');
+    }
+  } catch (err) {
+    console.error('Error sending scanned mood data:', err);
+  }
+}

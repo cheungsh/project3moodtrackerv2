@@ -13,16 +13,17 @@ model mood {
   exercise    Json?
   hobby       Json?
   meal        Json?
-  moodValue   String
+  moodValue   String?
   name        String
   period      Boolean?
-  scannedMoodValue   String?
+  scannedMood   String?
+  scannedStreak      Int
+  scannedSuggestion String?
   sleepEnd    DateTime? @db.Date
   sleepHours  Float?
   sleepStart  DateTime? @db.Date
   social      Json?
-  streak      Int
-  scannedStreak      Int
-  suggestions String
+  streak      Int?
+  suggestions String?
   weather     Json?
 }

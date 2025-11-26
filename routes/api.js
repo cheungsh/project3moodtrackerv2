@@ -18,9 +18,7 @@ const prisma = new PrismaClient()
 // Set this to match the model name in your Prisma schema
 const model = 'mood'
 
-/* ----- POST + Create------- */
-//Posts the mood record to MongoDB, generating suggestion with Gemini AI
-/* ----- POST ------- */
+/* ----- POST Regular Mood ------- */
 router.post('/mood', async (req, res) => {
   try {
     const {
@@ -32,23 +30,18 @@ router.post('/mood', async (req, res) => {
       social,
       weather,
       period,
-      scannedMoodValue,
-      scannedStreak,
       sleepStart,
       sleepEnd,
       sleepHours,
-      streak,
-      suggestions
+      streak
     } = req.body;
 
     // validate required fields
-    if (!name ||!moodValue) {
+    if (!name || !moodValue) {
       return res.status(400).json({ error: "name and moodValue are required" })
     }
 
-    /* ----- Prompt fot Gemini ------ */
-    // ------ Gemini PROMPT Construction ------
-    // You can make this prompt as detailed as you wish!
+    /* ----- Prompt for Gemini ------ */
     const prompt = `A user feels ${moodValue}. 
     They slept for ${sleepHours || "unknown"} hours yesterday. 
     They have eaten: ${meal && meal.length > 0 ? meal.join(', ') : "unknown"}. 
@@ -60,7 +53,7 @@ router.post('/mood', async (req, res) => {
     
     Generate a kind, specific, helpful suggestion to enhance their mood if they chose negative moods. 
     Generate encouragements to encourage them to keep doing what makes them feel happy if they chose positive moods. 
-    Sound supportive, friendly and causual. 
+    Sound supportive, friendly and casual. 
     Limit your response to a maximum of 3 sentences only.
     `
 
@@ -68,7 +61,7 @@ router.post('/mood', async (req, res) => {
     let geminiSuggestion = "Generating..."
     try {
       const geminiRes = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.0-flash-exp",
         contents: prompt,
       });
       geminiSuggestion = geminiRes.text || geminiRes.candidates?.[0]?.content?.parts?.[0]?.text || geminiSuggestion;
@@ -78,23 +71,23 @@ router.post('/mood', async (req, res) => {
     }
 
     /* ----- CREATE ------- */
-    //Create a new mood record in MongoDB
     const newMood = await prisma[model].create({
       data: {
         name: name || 'Anonymous',
         date: new Date(),
         moodValue,
-        exercise: exercise || '',
-        hobby: hobby || '',
-        meal: meal || '',
-        social: social || '',
-        weather: weather || '',
+        exercise: exercise || [],
+        hobby: hobby || [],
+        meal: meal || [],
+        social: social || [],
+        weather: weather || [],
         period: Boolean(period),
-        scannedMoodValue: scannedMoodValue || '',
-        scannedStreak: scannedStreak || 0,
-        sleepStart: sleepStart ? new Date(sleepStart) : new Date(),
-        sleepEnd: sleepEnd ? new Date(sleepEnd) : new Date(),
-        sleepHours: sleepHours ? parseFloat(sleepHours) : 0,
+        scannedMood: null,
+        scannedStreak: 0,
+        scannedSuggestion: null,
+        sleepStart: sleepStart ? new Date(sleepStart) : null,
+        sleepEnd: sleepEnd ? new Date(sleepEnd) : null,
+        sleepHours: sleepHours ? parseFloat(sleepHours) : null,
         streak: streak || 0,
         suggestions: geminiSuggestion,
       },
@@ -104,12 +97,82 @@ router.post('/mood', async (req, res) => {
     res.status(201).json(newMood);
 
   } catch (err) {
-        console.log(err);
-        res.status(500).send(err);
+    console.error('Error in /mood:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ----- POST Scanned Mood ------- */
+router.post('/scannedMood', async (req, res) => {
+  try {
+    const {
+      name,
+      scannedMoodValue,
+      scannedStreak
+    } = req.body;
+
+    console.log('Received scanned mood data:', { name, scannedMoodValue, scannedStreak });
+
+    // validate required fields
+    if (!name || !scannedMoodValue) {
+      return res.status(400).json({ error: "name and scannedMoodValue are required" })
     }
+
+    /* ----- Prompt for Gemini ------ */
+    const prompt = `A user's facial expression was scanned and detected as ${scannedMoodValue}. 
+    Based on their detected emotion of ${scannedMoodValue}.
+    
+    Generate a kind, specific, helpful suggestion to enhance their mood if they detected negative moods. 
+    Generate encouragements to encourage them to keep doing what makes them feel happy if they detected positive moods. 
+    Sound supportive, friendly and casual. 
+    Limit your response to a maximum of 3 sentences only.
+    `
+
+    // ------ Call Gemini ------
+    let geminiSuggestion2 = `You scanned as ${scannedMoodValue}! Keep tracking your emotions.`
+    try {
+      const geminiRes = await ai.models.generateContent({
+        model: "gemini-2.0-flash-exp",
+        contents: prompt,
+      });
+      geminiSuggestion2 = geminiRes.text || geminiRes.candidates?.[0]?.content?.parts?.[0]?.text || geminiSuggestion2;
+    } catch (err) {
+      console.error("Gemini suggestion generation failed:", err)
+      // remains as default suggestion
+    }
+
+    /* ----- CREATE ------- */
+    const newScannedMood = await prisma[model].create({
+      data: {
+        name: name || 'Anonymous',
+        date: new Date(),
+        moodValue: null,
+        scannedMood: scannedMoodValue,
+        scannedStreak: scannedStreak || 0,
+        scannedSuggestion: geminiSuggestion2,
+        // Set default/null values for other fields
+        exercise: [],
+        hobby: [],
+        meal: [],
+        social: [],
+        weather: [],
+        period: null,
+        sleepStart: null,
+        sleepEnd: null,
+        sleepHours: null,
+        streak: 0,
+        suggestions: null,
+      },
+    });
+    console.log('Scanned mood saved:', newScannedMood);
+    
+    res.status(201).json(newScannedMood);
+
+  } catch (err) {
+    console.error('Error in /scannedMood:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // export the api routes for use elsewhere in our app 
-// (e.g. in index.js )
 export default router;
-

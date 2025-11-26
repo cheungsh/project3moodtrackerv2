@@ -545,11 +545,11 @@ canvas {
   width: 100%;
   height: auto;
   padding: 18px;
-  background-color: #fff;
+  background-color: #d3ddce;
   border-radius: 20px;
   text-align: center;
   margin-top: 18px;
-  color: #414141;
+  color: #627954;
   border: none;
   cursor: pointer;
 }
@@ -559,6 +559,33 @@ canvas {
   font-family: 'Lexend Deca', sans-serif;
   font-weight: 600;
   margin: 0;
+}
+
+#scannedSuggestionOutput {
+  padding: 18px;
+  background-color: #627954;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 18px;
+  color: #ffffff;
+}
+
+#scannedSuggestionOutput h3 {
+  font-size: 1rem;
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#suggestionSuggestionText{
+  text-align: left;
+  font-size: 0.9rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
 }
 
 /*------------------Scanned Mood Streak----------------------*/
