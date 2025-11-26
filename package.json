@@ -1,7 +1,7 @@
 {
-  "name": "project3-mood-tracker",
+  "name": "Sherise Cheung",
   "version": "1.0.0",
-  "description": "DESN31927 Project 2: Persistant Data (Mood Tracker)",
+  "description": "DESN31927 Project 3",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,11 +14,10 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@google/genai": "1.30.0",
-    "@prisma/client": "6.18.0",
-    "express": "5.1.0"
+    "@prisma/client": "^6.18.0",
+    "express": "^5.1.0"
   },
   "devDependencies": {
-    "prisma": "6.18.0"
+    "prisma": "^6.18.0"
   }
 }

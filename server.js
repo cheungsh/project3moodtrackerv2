@@ -1,24 +1,27 @@
+// Express is a framework for building APIs and web apps
+// See also: https://expressjs.com/
 import express from 'express'
-import apiRoutes from './routes/api.js'
-import dotenv from 'dotenv'
-
-dotenv.config()
-
+// Initialize Express app
 const app = express()
 
-app.use(express.json())
-app.use(express.static('public'))
+import dotenv from 'dotenv'
+dotenv.config()
 
-// Use your API routes
+// Serve static files from /public folder (useful when running Node locally, optional on Vercel).
+app.use(express.static('public'))
+// Define index.html as the root explicitly (useful on Vercel, optional when running Node locally).
+app.get('/', (req, res) => { res.redirect('/index.html') })
+
+// Enable express to parse JSON data
+app.use(express.json())
+
+// Our API is defined in a separate module to keep things tidy.
+// Let's import our API endpoints and activate them.
+import apiRoutes from './routes/api.js'
 app.use('/', apiRoutes)
 
-// Export for Vercel
-export default app
 
-// Only listen locally (not on Vercel)
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000
-  app.listen(PORT, () => {
-    console.log(`Express is live at http://localhost:${PORT}`)
-  })
-}
+const port = 3000
+app.listen(port, () => {
+    console.log(`Express is live at http://localhost:${port}`)
+})
