@@ -51,8 +51,7 @@ router.post('/mood', async (req, res) => {
     Weather was: ${weather && weather.length > 0 ? weather.join(", ") : "unknown"}.
     They are${period ? "" : " not"} on their period.
     
-    Generate a kind, specific, helpful suggestion to enhance their mood if they chose negative moods. 
-    Generate encouragements to encourage them to keep doing what makes them feel happy if they chose positive moods. 
+    Generate a kind, specific, helpful suggestion to enhance their mood if they chose negative moods and encouragements to encourage them to keep doing what makes them feel happy if they chose positive moods. 
     Sound supportive, friendly and casual. 
     Limit your response to a maximum of 3 sentences only.
     `
@@ -61,7 +60,7 @@ router.post('/mood', async (req, res) => {
     let geminiSuggestion = "Generating..."
     try {
       const geminiRes = await ai.models.generateContent({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.5-flash",
         contents: prompt,
       });
       geminiSuggestion = geminiRes.text || geminiRes.candidates?.[0]?.content?.parts?.[0]?.text || geminiSuggestion;
@@ -122,17 +121,17 @@ router.post('/scannedMood', async (req, res) => {
     const prompt = `A user's facial expression was scanned and detected as ${scannedMoodValue}. 
     Based on their detected emotion of ${scannedMoodValue}.
     
-    Generate a kind, specific, helpful suggestion to enhance their mood if they detected negative moods. 
-    Generate encouragements to encourage them to keep doing what makes them feel happy if they detected positive moods. 
+    Generate a kind, specific, helpful suggestion to enhance their mood if they detected negative moods and generate encouragements to encourage them to keep doing what makes them feel happy if they detected positive moods. 
     Sound supportive, friendly and casual. 
     Limit your response to a maximum of 3 sentences only.
+    
     `
 
     // ------ Call Gemini ------
     let geminiSuggestion2 = `You scanned as ${scannedMoodValue}! Keep tracking your emotions.`
     try {
       const geminiRes = await ai.models.generateContent({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.5-flash",
         contents: prompt,
       });
       geminiSuggestion2 = geminiRes.text || geminiRes.candidates?.[0]?.content?.parts?.[0]?.text || geminiSuggestion2;

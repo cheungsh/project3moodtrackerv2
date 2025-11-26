@@ -704,10 +704,20 @@ async function sendScannedMoodData(data) {
     if (response.ok) {
       const respData = await response.json();
       console.log('Scanned mood data saved to MongoDB:', respData);
+      
+      // Update the scanned suggestion text on the page
+      if (respData.scannedSuggestion) {
+        document.getElementById('suggestionSuggestionText').innerText = respData.scannedSuggestion;
+      } else {
+        document.getElementById('suggestionSuggestionText').innerText = "Keep tracking your emotions!";
+      }
+      
     } else {
       console.error('Failed to save scanned mood data.');
+      document.getElementById('suggestionSuggestionText').innerText = "Failed to get suggestion, try again.";
     }
   } catch (err) {
     console.error('Error sending scanned mood data:', err);
+    document.getElementById('suggestionSuggestionText').innerText = "Error connecting to server.";
   }
 }

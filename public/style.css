@@ -525,8 +525,8 @@ canvas {
   padding: 10px 15px;
   cursor: pointer;
   border: none;
-  background: rgba(85, 85, 85, 0.8);
-  color: white;
+  background: #414141;
+  color: #fff;
   border-radius: 5px;
   font-size: 18px;
   z-index: 1001;
@@ -671,7 +671,7 @@ canvas {
 }
 
 /*------------------Mood Records + Suggestion----------------------*/
-.dark-mode #m2, .dark-mode #m3 {
+.dark-mode #m2, .dark-mode #m3, .dark-mode #m4 {
   background-color: #414141;
   color: #fff;
 }
@@ -746,4 +746,33 @@ canvas {
 
 .dark-mode #loaderContainer h3{
   color: #627954;
+}
+
+/*------------------Emotional Recognition----------------------*/
+.dark-mode .modal {
+  background-color: #f5f5f5;
+}
+
+.dark-mode .modalContent {
+  background: #000;
+}
+
+.dark-mode #backBtn {
+  background: #d3ddce;
+  color: #627954;
+}
+
+.dark-mode #checkMoodBtn {
+  background-color: #627954;
+  color: #fff;
+}
+
+.dark-mode #scannedSuggestionOutput {
+  background-color: #fff;
+  color: #627954;
+}
+
+/*------------------Scanned Mood Streak----------------------*/
+.dark-mode #scannedDayCounter {
+  color: #d3ddce;
 }
