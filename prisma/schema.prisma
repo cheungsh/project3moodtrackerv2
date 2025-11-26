@@ -16,11 +16,13 @@ model mood {
   moodValue   String
   name        String
   period      Boolean?
+  scannedMoodValue   String?
   sleepEnd    DateTime? @db.Date
   sleepHours  Float?
   sleepStart  DateTime? @db.Date
   social      Json?
   streak      Int
+  scannedStreak      Int
   suggestions String
   weather     Json?
 }

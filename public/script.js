@@ -269,6 +269,8 @@ moodbutton.addEventListener('click', async () => {
   const selectedMood = moodcomment.innerText;
   const name = localStorage.getItem('name') || 'Anonymous';
   const { sleepHours, exercise, hobby, meal, social, weather, period } = triggers;
+  const scannedMoodValue = localStorage.getItem('scannedMoodValue') || '';
+  const scannedStreak = parseInt(localStorage.getItem('scannedDayCounter')) || 0;
 
   // For user feedback: show a loading state while awaiting Gemini suggestion
   document.getElementById('suggestionText').innerText = "Generating...";
@@ -281,7 +283,9 @@ moodbutton.addEventListener('click', async () => {
     name,
     moodValue: selectedMood,
     ...triggers,
-    streak: recordedDayCounter
+    streak: recordedDayCounter,
+    scannedMoodValue,
+    scannedStreak,  
   });
   // Return to statistics tab after submit
   showSection('statistics');
@@ -314,33 +318,6 @@ document.getElementById('backToStatsBtn').addEventListener('click', function() {
   showSection('statistics');
 });
 
-/* ---------- Send Data to Backend ----------*/
-async function sendMoodData(data) {
-  try {
-    const response = await fetch('/mood', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (response.ok) {
-      const respData = await response.json();
-      if (respData.suggestions) {
-        document.getElementById('suggestionText').innerText = respData.suggestions;
-      } else {
-        document.getElementById('suggestionText').innerText = "Sorry, no suggestions available.";
-      }
-      console.log('Mood data saved to MongoDB.');
-    } else {
-      document.getElementById('suggestionText').innerText = "Failed to get suggestion, try again.";
-      console.error('Failed to save mood data.');
-    }
-  } catch (err) {
-    document.getElementById('suggestionText').innerText = "Error connecting to server.";
-    console.error('Error sending mood data:', err);
-  }
-  hideLoader();
-}
-
 /* ---------- Bottom Navbar ----------*/
 const tabSections = {
   statistics: document.getElementById('statisticsSection'),
@@ -361,6 +338,19 @@ function showSection(section) {
   navButtons.forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-section') === section);
   });
+
+  const greetingContainer = document.getElementById('greetingContainer');
+  const greetingSubheading = document.getElementById('greetingSubheading');
+
+  if (section === 'statistics') {
+    greetingContainer.style.display = 'block';
+    greetingSubheading.innerHTML = 'How was your day?';
+  } else if (section === 'profile') {
+    greetingContainer.style.display = 'block';
+    greetingSubheading.innerHTML = 'Make your day easier by scanning!';
+  } else if (section === 'log') {
+    greetingContainer.style.display = 'none';
+  }
 
   // Hide bottom nav on log tab, show otherwise
   if (section === 'log') {
@@ -440,160 +430,234 @@ function hideLoader() {
   moodbutton.disabled = false;
 }
 
+/*-------------------Emotional Recognition---------------------*/
+let webcamStream;
+let faceApiInstance;
+let faceResults = [];
+let emotionLabels = ["neutral","happy","sad","angry","fearful","disgusted","surprised"];
+let moodFlowActive = false;
+let p5Instance; // Store p5 instance
+let emotionSamples = []; // Store emotion samples during 5-second scan
+let scanStartTime = null;
+let scanDuration = 5000; // 5 seconds in milliseconds
+let isScanning = false;
 
-/*-------------------Emotional Recognition (Rebuilt per request)---------------------*/
-let capture;
-let captureWidth = 360;
-let captureHeight = 500;
+const triggerMoodBtn = document.getElementById("checkMoodBtn");
+const closeMoodBtn = document.getElementById("backBtn");
+const modalNode = document.getElementById("moodModal");
 
-let emotions = ["neutral","happy","sad","angry","fearful","disgusted","surprised"];
+triggerMoodBtn.addEventListener("click", () => {
+  modalNode.style.display = "flex";
+  emotionSamples = [];
+  scanStartTime = null;
+  isScanning = false;
 
-let faceapi;
-let detections = [];
-
-let moodActive = false;
-let canvasRef = null;
-
-const checkMoodBtn = document.getElementById("checkMoodBtn");
-const checkMoodBackBtn = document.getElementById("checkMoodBackBtn");
-const moodModal = document.getElementById("moodModal");
-const canvasContainer = document.getElementById("canvasContainer");
-
-if (checkMoodBtn) checkMoodBtn.addEventListener("click", openMoodModal);
-if (checkMoodBackBtn) checkMoodBackBtn.addEventListener("click", closeMoodModal);
-
-function openMoodModal() {
-  if (moodModal) {
-    moodModal.style.display = "flex";
-    moodModal.setAttribute("aria-hidden", "false");
+  if (!moodFlowActive) {
+    initP5Sketch();
+    moodFlowActive = true;
   }
-  moodActive = true;
-  resizeCanvasToContainer();
+});
+
+closeMoodBtn.addEventListener("click", () => {
+  closeScanModal();
+});
+
+function initP5Sketch() {
+  // Create a new p5 instance
+  p5Instance = new p5((sketch) => {
+    
+    sketch.setup = function() {
+      // Get full window dimensions
+      const canvas = sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+      canvas.parent("canvasContainer");
+
+      webcamStream = sketch.createCapture(sketch.VIDEO);
+      webcamStream.size(640, 480);
+      webcamStream.hide();
+
+      const apiOptions = {
+        withLandmarks: true,
+        withExpressions: true,
+        withDescriptors: false
+      };
+
+      faceApiInstance = ml5.faceApi(webcamStream, apiOptions, onFaceApiReady);
+    };
+
+    sketch.windowResized = function() {
+      sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
+    };
+
+    sketch.draw = function() {
+      if (!moodFlowActive) return;
+
+      sketch.background(0);
+      
+      // Calculate scaling to cover the entire canvas while maintaining aspect ratio
+      const videoAspect = webcamStream.width / webcamStream.height;
+      const canvasAspect = sketch.width / sketch.height;
+      
+      let drawWidth, drawHeight, drawX, drawY;
+      
+      if (canvasAspect > videoAspect) {
+        // Canvas is wider than video - fit to width
+        drawWidth = sketch.width;
+        drawHeight = sketch.width / videoAspect;
+        drawX = 0;
+        drawY = (sketch.height - drawHeight) / 2;
+      } else {
+        // Canvas is taller than video - fit to height
+        drawHeight = sketch.height;
+        drawWidth = sketch.height * videoAspect;
+        drawX = (sketch.width - drawWidth) / 2;
+        drawY = 0;
+      }
+      
+      // Draw the video scaled to cover the canvas
+      sketch.image(webcamStream, drawX, drawY, drawWidth, drawHeight);
+
+      if (faceResults.length > 0) {
+        const face = faceResults[0];
+        
+        // Start scanning when face is detected
+        if (!isScanning && !scanStartTime) {
+          scanStartTime = Date.now();
+          isScanning = true;
+          console.log("Face detected! Starting 5-second scan...");
+        }
+        
+        const pts = face.landmarks.positions;
+
+        // Scale factor for landmarks based on how video is displayed
+        const scaleX = drawWidth / webcamStream.width;
+        const scaleY = drawHeight / webcamStream.height;
+
+        sketch.fill('#d3ddce');
+        sketch.noStroke();
+
+        for (let p of pts) {
+          // Scale the landmark positions to match the displayed video size
+          const x = p._x * scaleX + drawX;
+          const y = p._y * scaleY + drawY;
+          sketch.circle(x, y, 8);
+        }
+
+        // Collect emotion samples during scanning
+        if (isScanning && face.expressions) {
+          emotionSamples.push({...face.expressions});
+        }
+      } else {
+        // No face detected - show instruction
+        sketch.fill(255);
+        sketch.textSize(24);
+        sketch.textAlign(sketch.CENTER, sketch.CENTER);
+        sketch.text("Please position your face in frame", sketch.width / 2, sketch.height / 2);
+      }
+
+      // Check if 5 seconds have passed (only if scanning started)
+      if (isScanning && scanStartTime && (Date.now() - scanStartTime >= scanDuration)) {
+        processScanResults();
+        return;
+      }
+
+      // Display countdown timer (only when scanning)
+      if (isScanning && scanStartTime) {
+        const remaining = Math.ceil((scanDuration - (Date.now() - scanStartTime)) / 1000);
+        sketch.fill(255);
+        sketch.textSize(48);
+        sketch.textAlign(sketch.CENTER, sketch.CENTER);
+        sketch.text(remaining, sketch.width / 2, 60);
+      }
+    };
+    
+  });
 }
 
-function closeMoodModal() {
-  if (moodModal) {
-    moodModal.style.display = "none";
-    moodModal.setAttribute("aria-hidden", "true");
-  }
-  moodActive = false;
+function onFaceApiReady() {
+  faceApiInstance.detect(onFaceDetected);
 }
 
-/* ---------------- p5 setup ---------------- */
-function setup() {
-  pixelDensity(1);
-  canvasRef = createCanvas(captureWidth, captureHeight);
-  if (canvasContainer) canvasRef.parent("canvasContainer");
-
-  capture = createCapture(VIDEO);
-  capture.size(captureWidth, captureHeight);
-
-  capture.position(0, 0);
-  capture.hide();
-
-  const faceOptions = {
-    withLandmarks: true,
-    withExpressions: true,
-    withDescriptors: false
-  };
-  faceapi = ml5.faceApi(capture, faceOptions, faceReady);
-}
-
-function faceReady() {
-  faceapi.detect(gotFaces);
-}
-
-function gotFaces(err, result) {
+function onFaceDetected(err, result) {
   if (err) {
     console.error(err);
     return;
   }
-  detections = result || [];
-  console.log(detections);
 
-  if (faceapi && faceapi.detect) {
-    faceapi.detect(gotFaces);
-  }
+  faceResults = result;
+  faceApiInstance.detect(onFaceDetected);
 }
 
-function draw() {
-  if (!moodActive) {
-    clear();
+function processScanResults() {
+  isScanning = false;
+  
+  if (emotionSamples.length === 0) {
+    console.log("No emotion data collected");
+    closeScanModal();
     return;
   }
 
-  background(0);
+  // Calculate average emotion scores
+  const emotionTotals = {};
+  emotionLabels.forEach(emotion => emotionTotals[emotion] = 0);
 
-  if (capture && capture.loadedmetadata !== false) {
-    capture.loadPixels();
-
-    if (capture.pixels && capture.pixels.length > 0) {
-      noStroke();
-      for (let y = 0; y < capture.height; y += 5) {
-        for (let x = 0; x < capture.width; x += 5) {
-          const pixelIndex = (x + y * capture.width) * 4;
-          const r = capture.pixels[pixelIndex + 0];
-          const g = capture.pixels[pixelIndex + 1];
-          const b = capture.pixels[pixelIndex + 2];
-
-          const avg = (r + g + b) / 3;
-          const diameter = map(avg, 0, 255, 1, 7);
-
-          fill(r, g, b);
-          circle(x, y, diameter);
-        }
+  emotionSamples.forEach(sample => {
+    for (let emotion in sample) {
+      if (emotionTotals.hasOwnProperty(emotion)) {
+        emotionTotals[emotion] += sample[emotion];
       }
-    } else {
-      image(capture, 0, 0, width, height);
+    }
+  });
+
+  // Find highest average emotion
+  let maxEmotion = "";
+  let maxValue = 0;
+
+  for (let emotion in emotionTotals) {
+    const avgValue = emotionTotals[emotion] / emotionSamples.length;
+    if (avgValue > maxValue) {
+      maxValue = avgValue;
+      maxEmotion = emotion;
     }
   }
 
-  if (detections && detections.length > 0) {
-    for (let i = 0; i < detections.length; i++) {
-      const d = detections[i];
-      const points = d.landmarks.positions;
+  console.log(`Detected emotion over 5 seconds: ${maxEmotion.toUpperCase()}`);
 
-      push();
-      fill('green');
-      noStroke();
-      for (let j = 0; j < points.length; j++) {
-        circle(points[j]._x, points[j]._y, 5);
-      }
-      pop();
+  // Save to localStorage
+  localStorage.setItem("scannedMoodValue", maxEmotion);
 
-      push();
-      fill(255);
-      textSize(14);
-      let baseX = 40;
-      let baseY = 30;
-      for (let k = 0; k < emotions.length; k++) {
-        const thisemotion = emotions[k];
-        const thisemotionlevel = d.expressions[thisemotion] || 0;
+  // Update scanned streak
+  const todayString = new Date().toDateString();
+  const lastScanned = localStorage.getItem("lastScannedDate");
 
-        fill(255);
-        text(thisemotion + " value: " + thisemotionlevel, baseX, baseY + 30 * k);
-
-        fill('green');
-        rect(baseX, baseY + 30 * k, thisemotionlevel * 100, 10);
-      }
-      pop();
-    }
+  if (lastScanned !== todayString) {
+    scannedDayCounter++;
+    localStorage.setItem("scannedDayCounter", scannedDayCounter);
+    localStorage.setItem("lastScannedDate", todayString);
+    scannedCounterElement.innerHTML = scannedDayCounter;
   }
+
+  // Close modal and return to profile
+  closeScanModal();
 }
 
-function resizeCanvasToContainer() {
-  const container = document.getElementById("canvasContainer");
-  if (!container) return;
+function closeScanModal() {
+  modalNode.style.display = "none";
+  isScanning = false;
+  emotionSamples = [];
+  scanStartTime = null;
 
-  const displayW = container.clientWidth || captureWidth;
-  const aspect = captureWidth / captureHeight;
-  const displayH = Math.round(displayW / aspect);
-
-  resizeCanvas(displayW, displayH);
-}
-
-function windowResized() {
-  if (moodModal && moodModal.style.display === "flex") {
-    resizeCanvasToContainer();
+  if (p5Instance) {
+    p5Instance.noLoop();
+    if (webcamStream) webcamStream.remove();
+    p5Instance.remove();
+    p5Instance = null;
   }
+
+  moodFlowActive = false;
+  faceResults = [];
 }
+
+/* ---------- Scanned Days Counter ----------*/
+const scannedCounterElement = document.getElementById("scannedDayCounter");
+let scannedDayCounter = parseInt(localStorage.getItem("scannedDayCounter")) || 0;
+scannedCounterElement.innerHTML = scannedDayCounter;
