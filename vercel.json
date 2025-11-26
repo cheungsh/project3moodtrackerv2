@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["routes/**", ".env"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/mood",
+      "dest": "server.js"
+    },
+    {
+      "src": "/scannedMood",
+      "dest": "server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "GEMINI_API_KEY": "@gemini_api_key"
+  }
+}
